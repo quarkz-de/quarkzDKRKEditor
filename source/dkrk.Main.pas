@@ -78,7 +78,7 @@ begin
 
   FCookbook := GlobalContainer.Resolve<ICookbook>;
 {$ifdef DEBUG}
-  FCookbook.Load('d:\entw\quarkz.dx\quarkzDKRKEditor\kochbuch.db');
+  FCookbook.Load('d:\entw\quarkz.dx\quarkzDKRKEditor\data\kochbuch.db');
 {$else}
   FCookbook.SelectAndLoad;
 {$endif}

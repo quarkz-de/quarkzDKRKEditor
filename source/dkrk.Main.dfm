@@ -163,7 +163,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 0
         OnClick = lbCategoriesClick
-        ExplicitWidth = 169
       end
     end
     object pnRecipes: TPanel
@@ -239,9 +238,6 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 0
         OnClick = lbRecipesClick
-        ExplicitLeft = 11
-        ExplicitTop = 5
-        ExplicitWidth = 189
       end
     end
   end
@@ -253,7 +249,7 @@ object Form1: TForm1
     Left = 480
     Top = 296
     Bitmap = {
-      494C010105000800140018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800180018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000600000003000000001002000000000000048
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
