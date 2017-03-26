@@ -10,7 +10,7 @@ type
   ICookbook = interface
     ['{2AB94E41-3B66-4F4D-B575-4A2F9CEABA3E}']
     function Load(const AFilename: String): Boolean;
-    function SelectAnd: Boolean;
+    function SelectAndLoad: Boolean;
     procedure Close;
     function IsLoaded: Boolean;
     function GetSession: TSession;
@@ -28,12 +28,11 @@ type
   TCookbook = class(TInterfacedObject, ICookbook)
   private
     FDormSession: TSession;
-    function SelectAndLoad: Boolean;
   public
     constructor Create;
     destructor Destroy; override;
     function Load(const AFilename: String): Boolean;
-    function SelectAnd: Boolean;
+    function SelectAndLoad: Boolean;
     procedure Close;
     function IsLoaded: Boolean;
     function GetSession: TSession;
@@ -85,11 +84,6 @@ begin
     begin
       Result := SelectAndLoad;
     end;
-end;
-
-function TCookbook.SelectAnd: Boolean;
-begin
-
 end;
 
 function TCookbook.SelectAndLoad: Boolean;
