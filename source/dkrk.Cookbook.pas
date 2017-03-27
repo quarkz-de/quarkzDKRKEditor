@@ -77,7 +77,11 @@ begin
       Close;
       Builder := TDormSQLiteConfigBuilder.Create(AFilename);
       Reader := TStringReader.Create(Builder.BuildConfig);
+{$ifdef DEBUG}
       FDormSession := TSession.CreateConfigured(Reader, TdormEnvironment.deDevelopment);
+{$else}
+      FDormSession := TSession.CreateConfigured(Reader, TdormEnvironment.deRelease);
+{$endif}
       Result := true;
     end
   else
@@ -94,7 +98,7 @@ begin
   Dialog.Filter := 'SQLite-Dateien (*.db;*sqlite;*.sqlite3)|*.db;*.sqlite;*.sqlite3|Alle Dateien (*.*)|*.*';
   Dialog.DefaultExt := 'db';
   Dialog.Filename := 'kochbuch.db';
-  Dialog.Options := [ofHideReadOnly,ofFileMustExist,ofEnableSizing];
+  Dialog.Options := [ofHideReadOnly, ofFileMustExist, ofEnableSizing];
   if Dialog.Execute then
     Result := Load(Dialog.Filename)
   else
