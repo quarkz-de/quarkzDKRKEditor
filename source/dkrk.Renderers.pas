@@ -14,6 +14,8 @@ type
 
 implementation
 
+{$R *.RES}
+
 uses
   Spring.Container,
   dkrk.Ingredients;
@@ -24,14 +26,22 @@ type
     function H1(const AText: String): String;
     function H2(const AText: String): String;
     function P(const AText: String): String;
+    function B(const AText: String): String;
     function QuantityRow(const AIngredient: TIngredient): String;
     function Row(const AIngredient: TIngredient): String;
     function TitleRow(const AIngredient: TIngredient): String;
+    function Rating(const ACount, AMax: Integer;
+      const AResNameOn, AResNameOff: String): String;
   public
     procedure Render(const ARecipe: TRecipe; const AHTML: TStrings);
   end;
 
 { TRecipeRenderer }
+
+function TRecipeRenderer.B(const AText: String): String;
+begin
+  Result := Format('<b>%s</b>', [AText]);
+end;
 
 function TRecipeRenderer.H1(const AText: String): String;
 begin
@@ -52,6 +62,21 @@ function TRecipeRenderer.QuantityRow(const AIngredient: TIngredient): String;
 begin
   Result := Format('<tr><td>%g %s</td><td>%s</td></tr>',
     [AIngredient.Quantity, AIngredient.Measure, AIngredient.Ingredient]);
+end;
+
+function TRecipeRenderer.Rating(const ACount, AMax: Integer; const AResNameOn,
+  AResNameOff: String): String;
+var
+  I: Integer;
+begin
+  Result := '';
+  for I := 1 to AMax do
+    begin
+      if I > ACount then
+        Result := Result + Format('<img src="%s">', [AResNameOff])
+      else
+        Result := Result + Format('<img src="%s">', [AResNameOn]);
+    end;
 end;
 
 procedure TRecipeRenderer.Render(const ARecipe: TRecipe; const AHTML: TStrings);
@@ -90,6 +115,16 @@ begin
   for I := 0 to Prep.Count - 1 do
     AHTML.Add(P(Prep[I]));
   Prep.Free;
+
+  if ARecipe.PrepDuration > 0 then
+    AHTML.Add(P(Format('Zubereitungsdauer: %d Minuten', [ARecipe.PrepDuration])));
+
+  AHTML.Add(H2('Weitere Informationen'));
+  AHTML.Add(P(Format('Quelle: %s', [ARecipe.Source])));
+  AHTML.Add(P('Schwierigkeit:'));
+  AHTML.Add(P(Rating(ARecipe.DiffRating div 2, 8, 'DIFF_ON', 'DIFF_OFF')));
+  AHTML.Add(P('Bewertung:'));
+  AHTML.Add(P(Rating(ARecipe.Rating div 2, 8, 'RATING_ON', 'RATING_OFF')));
 
   AHTML.Add('</body>');
   AHTML.Add('</html>');

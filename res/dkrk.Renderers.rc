@@ -1,0 +1,5 @@
+DIFF_ON BITMAP "dkrk.DiffOn.bmp"
+DIFF_OFF BITMAP "dkrk.DiffOff.bmp"
+RATING_ON BITMAP "dkrk.RatingOn.bmp"
+RATING_OFF BITMAP "dkrk.RatingOff.bmp"
+CSS_RECIPE RCDATA "dkrk.Recipes.css"

@@ -1,12 +1,12 @@
 program qzDKRKEditor;
 
-{$R *.dres}
+
 
 uses
   Vcl.Forms,
   Spring.Container,
   dkrk.Main in 'dkrk.Main.pas' {Form1},
-  dkrk.Cookbook in 'dkrk.Cookbook.pas',
+  dkrk.Cookbook in 'dkrk.Cookbook.pas' {dmSession: TDataModule},
   dkrk.Entities in 'dkrk.Entities.pas',
   dkrk.Ingredients in 'dkrk.Ingredients.pas',
   dkrk.Visualizers in 'dkrk.Visualizers.pas',
