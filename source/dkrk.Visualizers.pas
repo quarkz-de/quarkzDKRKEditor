@@ -37,7 +37,7 @@ type
 implementation
 
 uses
-  Spring.Container;
+  Vcl.Graphics, Spring.Container, HtmlGlobals;
 
 type
   TCategoryVisualizer = class(TInterfacedObject, ICategoryVisualizer)
@@ -75,6 +75,8 @@ type
     FRenderer: IRecipeRenderer;
     procedure LoadStreamFromResource(const AResourceName: String; var Stream: TStream);
     procedure OnStreamRequest(Sender: TObject; const SRC: String; var Stream: TStream);
+    procedure OnBitmapRequest(Sender: TObject; const SRC: ThtString;
+      var Bitmap: TBitmap; var Color: TColor);
   public
     constructor Create;
     procedure SetHtmlViewer(const AHtmlViewer: THtmlViewer);
@@ -184,6 +186,7 @@ end;
 procedure TRecipeDisplayVisualizer.InitComponent;
 begin
   FHtmlViewer.OnhtStreamRequest := OnStreamRequest;
+  FHtmlViewer.OnBitmapRequest := OnBitmapRequest;
 end;
 
 procedure TRecipeDisplayVisualizer.LoadStreamFromResource(
@@ -192,7 +195,7 @@ var
   MemHandle, ResHandle: THandle;
   ResourceData: PChar;
 begin
-  ResHandle := FindResource(hInstance, PChar(AResourceName), RT_RCDATA);
+  ResHandle := FindResource(HInstance, PChar(AResourceName), RT_RCDATA);
   if ResHandle > 0 then
     begin
       MemHandle := LoadResource(HInstance, ResHandle);
@@ -204,6 +207,16 @@ begin
           FreeResource(MemHandle);
         end;
     end;
+end;
+
+procedure TRecipeDisplayVisualizer.OnBitmapRequest(Sender: TObject;
+  const SRC: ThtString; var Bitmap: TBitmap; var Color: TColor);
+var
+  MemHandle, ResHandle: THandle;
+  ResourceData: PChar;
+begin
+  Bitmap := TBitmap.Create;
+  Bitmap.Handle := LoadBitmap(HInstance, PChar(SRC));
 end;
 
 procedure TRecipeDisplayVisualizer.OnStreamRequest(Sender: TObject;
