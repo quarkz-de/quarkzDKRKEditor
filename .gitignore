@@ -9,6 +9,7 @@
 *.drc
 *.map
 *.dres
+*.dproj
 *.rsm
 *.tds
 *.dcu
