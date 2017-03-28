@@ -12,7 +12,7 @@ uses
   dkrk.Cookbook, dkrk.Visualizers;
 
 type
-  TForm1 = class(TForm)
+  TwMain = class(TForm)
     pnRecipeDisplay: TPanel;
     Splitter2: TSplitter;
     pnLeft: TPanel;
@@ -43,6 +43,12 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure lbCategoriesClick(Sender: TObject);
     procedure lbRecipesClick(Sender: TObject);
+    procedure acAddCategoryExecute(Sender: TObject);
+    procedure acEditCategoryExecute(Sender: TObject);
+    procedure acDeleteCategoryExecute(Sender: TObject);
+    procedure acAddRecipeExecute(Sender: TObject);
+    procedure acDeleteRecipeExecute(Sender: TObject);
+    procedure acEditRecipeExecute(Sender: TObject);
   private
     { Private-Deklarationen }
     FCategoryVisualizer: ICategoryVisualizer;
@@ -54,18 +60,95 @@ type
   end;
 
 var
-  Form1: TForm1;
+  wMain: TwMain;
 
 implementation
 
 {$R *.dfm}
 
 uses
-  dorm, dorm.Commons,
+  dorm, dorm.Commons, dorm.ObjectStatus,
   Spring.Container,
-  dkrk.Entities, dkrk.Ingredients, dkrk.Renderers;
+  dkrk.Entities, dkrk.Ingredients, dkrk.Renderers, dkrk.CategoryEditor,
+  dkrk.RecipeEditor;
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TwMain.acAddCategoryExecute(Sender: TObject);
+var
+  Category: TCategory;
+begin
+  Category := TCategory.Create;
+  if TwCategoryEditor.ExecuteDialog(Category) then
+    begin
+      FCookbook.GetSession.Persist(Category);
+      FCategoryVisualizer.Add(Category);
+    end
+  else
+    Category.Free;
+end;
+
+procedure TwMain.acAddRecipeExecute(Sender: TObject);
+var
+  Recipe: TRecipe;
+begin
+  Recipe := TRecipe.Create;
+  if TwRecipeEditor.ExecuteDialog(Recipe) then
+    begin
+      FCookbook.GetSession.Persist(Recipe);
+      FRecipeListVisualizer.Add(Recipe);
+    end
+  else
+    Recipe.Free;
+end;
+
+procedure TwMain.acDeleteCategoryExecute(Sender: TObject);
+var
+  Category: TCategory;
+begin
+  if (lbCategories.ItemIndex > -1) and (MessageDlg('Kategorie wirklich löschen?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    begin
+      Category := TCategory(lbCategories.Items.Objects[lbCategories.ItemIndex]);
+      Category.ObjStatus := osDeleted;
+      FCookbook.GetSession.Persist(Category);
+      FCategoryVisualizer.Remove(Category);
+    end;
+end;
+
+procedure TwMain.acDeleteRecipeExecute(Sender: TObject);
+begin
+  //
+end;
+
+procedure TwMain.acEditCategoryExecute(Sender: TObject);
+var
+  Category: TCategory;
+begin
+  if lbCategories.ItemIndex > -1 then
+    begin
+      Category := TCategory(lbCategories.Items.Objects[lbCategories.ItemIndex]);
+      if TwCategoryEditor.ExecuteDialog(Category) then
+        begin
+          FCookbook.GetSession.Persist(Category);
+          lbCategories.Invalidate;
+        end;
+    end;
+end;
+
+procedure TwMain.acEditRecipeExecute(Sender: TObject);
+var
+  Recipe: TRecipe;
+begin
+  if lbRecipes.ItemIndex > -1 then
+    begin
+      Recipe := TRecipe(lbRecipes.Items.Objects[lbRecipes.ItemIndex]);
+      if TwRecipeEditor.ExecuteDialog(Recipe) then
+        begin
+          FCookbook.GetSession.Persist(Recipe);
+          lbRecipes.Invalidate;
+        end;
+    end;
+end;
+
+procedure TwMain.FormCreate(Sender: TObject);
 begin
   FCategoryVisualizer := GlobalContainer.Resolve<ICategoryVisualizer>;
   FCategoryVisualizer.SetListbox(lbCategories);
@@ -89,12 +172,12 @@ begin
     end;
 end;
 
-procedure TForm1.FormDestroy(Sender: TObject);
+procedure TwMain.FormDestroy(Sender: TObject);
 begin
   FCookbook.Close;
 end;
 
-procedure TForm1.lbCategoriesClick(Sender: TObject);
+procedure TwMain.lbCategoriesClick(Sender: TObject);
 var
   Category: TCategory;
 begin
@@ -108,7 +191,7 @@ begin
     end;
 end;
 
-procedure TForm1.lbRecipesClick(Sender: TObject);
+procedure TwMain.lbRecipesClick(Sender: TObject);
 var
   Recipe: TRecipe;
 begin

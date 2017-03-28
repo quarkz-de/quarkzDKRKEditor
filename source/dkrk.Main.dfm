@@ -1,4 +1,4 @@
-object Form1: TForm1
+object wMain: TwMain
   Left = 0
   Top = 0
   Caption = 'quarkzDKRKEditor - Der Editor f'#252'r "Das kleine rote Kochbuch"'
@@ -32,9 +32,6 @@ object Form1: TForm1
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 1
-    ExplicitLeft = 527
-    ExplicitTop = -8
-    ExplicitWidth = 609
     object hvRecipe: THtmlViewer
       AlignWithMargins = True
       Left = 4
@@ -59,9 +56,6 @@ object Form1: TForm1
       TabOrder = 0
       Touch.InteractiveGestures = [igPan]
       Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia]
-      ExplicitLeft = 8
-      ExplicitTop = 5
-      ExplicitWidth = 561
     end
     object pnRecipe: TPanel
       Left = 0
@@ -72,8 +66,6 @@ object Form1: TForm1
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 1
-      ExplicitTop = 546
-      ExplicitWidth = 205
     end
   end
   object pnLeft: TPanel
@@ -101,7 +93,6 @@ object Form1: TForm1
       Constraints.MinWidth = 180
       ParentColor = True
       TabOrder = 0
-      ExplicitLeft = 8
       object pnCategoryButtons: TPanel
         Left = 0
         Top = 543
@@ -111,7 +102,6 @@ object Form1: TForm1
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 1
-        ExplicitTop = 546
         object btEditCategory: TButton
           Left = 63
           Top = 0
@@ -175,8 +165,6 @@ object Form1: TForm1
       Constraints.MinWidth = 180
       ParentColor = True
       TabOrder = 1
-      ExplicitLeft = 230
-      ExplicitWidth = 176
       object pnRecipeButtons: TPanel
         Left = 0
         Top = 543
@@ -186,7 +174,6 @@ object Form1: TForm1
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 1
-        ExplicitTop = 546
         object btAddRecipe: TButton
           Left = 3
           Top = 0
@@ -249,7 +236,7 @@ object Form1: TForm1
     Left = 480
     Top = 296
     Bitmap = {
-      494C010105000800180018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101050008001C0018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000600000003000000001002000000000000048
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -857,26 +844,32 @@ object Form1: TForm1
     object acAddCategory: TAction
       Category = 'Category'
       ImageIndex = 0
+      OnExecute = acAddCategoryExecute
     end
     object acEditCategory: TAction
       Category = 'Category'
       ImageIndex = 1
+      OnExecute = acEditCategoryExecute
     end
     object acDeleteCategory: TAction
       Category = 'Category'
       ImageIndex = 2
+      OnExecute = acDeleteCategoryExecute
     end
     object acAddRecipe: TAction
       Category = 'Recipe'
       ImageIndex = 0
+      OnExecute = acAddRecipeExecute
     end
     object acEditRecipe: TAction
       Category = 'Recipe'
       ImageIndex = 1
+      OnExecute = acEditRecipeExecute
     end
     object acDeleteRecipe: TAction
       Category = 'Recipe'
       ImageIndex = 2
+      OnExecute = acDeleteRecipeExecute
     end
   end
 end

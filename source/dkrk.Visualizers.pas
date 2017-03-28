@@ -6,8 +6,8 @@ uses
   System.SysUtils, System.Generics.Collections, System.Classes,
   Winapi.Windows,
   Vcl.Controls, Vcl.StdCtrls,
-  HtmlView,
-  dkrk.Entities, dkrk.Renderers;
+  HtmlView, VirtualTrees,
+  dkrk.Entities, dkrk.Renderers, dkrk.Ingredients;
 
 type
   IAbstractVisualizer = interface
@@ -20,18 +20,29 @@ type
     ['{DC949CBD-44B6-4B01-A332-7F5BC0B95980}']
     procedure SetListbox(const AListbox: TListbox);
     procedure SetCategories(const ACategories: TObjectList<TCategory>);
+    procedure Add(const ACategory: TCategory);
+    procedure Remove(const ACategory: TCategory);
   end;
 
   IRecipeListVisualizer = interface(IAbstractVisualizer)
     ['{DC949CBD-44B6-4B01-A332-7F5BC0B95980}']
     procedure SetListbox(const AListbox: TListbox);
     procedure SetRecipes(const ARecipes: TObjectList<TRecipe>);
+    procedure Add(const ARecipe: TRecipe);
+    procedure Remove(const ARecipe: TRecipe);
   end;
 
   IRecipeDisplayVisualizer = interface(IAbstractVisualizer)
     ['{B1BD11EC-AFF6-4941-9E72-FF3E7677A262}']
     procedure SetHtmlViewer(const AHtmlViewer: THtmlViewer);
     procedure SetRecipe(const ARecipe: TRecipe);
+  end;
+
+  IIngredientListVisualizer = interface(IAbstractVisualizer)
+    ['{85E9C031-E6F8-44CC-870E-C0FB3A7C0681}']
+    procedure SetVirtualStringTree(const ATree: TVirtualStringTree);
+    procedure SetIngredients(const AList: TIngredientsList);
+    function GetIngredients: TIngredientsList;
   end;
 
 implementation
@@ -52,6 +63,8 @@ type
     procedure SetCategories(const ACategories: TObjectList<TCategory>);
     procedure InitComponent;
     procedure RenderContent;
+    procedure Add(const ACategory: TCategory);
+    procedure Remove(const ACategory: TCategory);
   end;
 
   TRecipeListVisualizer = class(TInterfacedObject, IRecipeListVisualizer)
@@ -66,6 +79,8 @@ type
     procedure SetRecipes(const ARecipes: TObjectList<TRecipe>);
     procedure InitComponent;
     procedure RenderContent;
+    procedure Add(const ARecipe: TRecipe);
+    procedure Remove(const ARecipe: TRecipe);
   end;
 
   TRecipeDisplayVisualizer = class(TInterfacedObject, IRecipeDisplayVisualizer)
@@ -85,7 +100,32 @@ type
     procedure RenderContent;
   end;
 
+  TIngredientListVisualizer = class(TInterfacedObject,
+    IIngredientListVisualizer)
+  private
+    FTree: TVirtualStringTree;
+    FList: TIngredientsList;
+    procedure OnGetNodeDataSize(Sender: TBaseVirtualTree;
+      var NodeDataSize: Integer);
+    procedure OnGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
+      Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure OnFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
+  public
+    procedure SetVirtualStringTree(const ATree: TVirtualStringTree);
+    procedure SetIngredients(const AList: TIngredientsList);
+    function GetIngredients: TIngredientsList;
+    procedure InitComponent;
+    procedure RenderContent;
+  end;
+
 { TCategoryVisualizer }
+
+procedure TCategoryVisualizer.Add(const ACategory: TCategory);
+begin
+  FCategories.Add(ACategory);
+  RenderContent;
+  FListbox.ItemIndex := FListbox.Count - 1;
+end;
 
 procedure TCategoryVisualizer.InitComponent;
 begin
@@ -113,6 +153,12 @@ begin
   DataObject := FCategories[Index];
 end;
 
+procedure TCategoryVisualizer.Remove(const ACategory: TCategory);
+begin
+  FCategories.Delete(FCategories.IndexOf(ACategory));
+  RenderContent;
+end;
+
 procedure TCategoryVisualizer.RenderContent;
 begin
   FListbox.Count := FCategories.Count;
@@ -131,6 +177,13 @@ begin
 end;
 
 { TRecipeListVisualizer }
+
+procedure TRecipeListVisualizer.Add(const ARecipe: TRecipe);
+begin
+  FRecipes.Add(ARecipe);
+  RenderContent;
+  FListbox.ItemIndex := FListbox.Count - 1;
+end;
 
 procedure TRecipeListVisualizer.InitComponent;
 begin
@@ -156,6 +209,12 @@ procedure TRecipeListVisualizer.OnDataObject(Control: TWinControl;
   Index: Integer; var DataObject: TObject);
 begin
   DataObject := FRecipes[Index];
+end;
+
+procedure TRecipeListVisualizer.Remove(const ARecipe: TRecipe);
+begin
+  FRecipes.Delete(FRecipes.IndexOf(ARecipe));
+  RenderContent;
 end;
 
 procedure TRecipeListVisualizer.RenderContent;
@@ -247,8 +306,116 @@ begin
   FRecipe := ARecipe;
 end;
 
+{ TIngredientListVisualizer }
+
+type
+  TIngredientListNodeData = record
+    Quantity: Single;
+    Measure: String;
+    Ingredient: String;
+  end;
+  PIngredientListNodeData = ^TIngredientListNodeData;
+
+function TIngredientListVisualizer.GetIngredients: TIngredientsList;
+var
+  Node: PVirtualNode;
+  Data: PIngredientListNodeData;
+  Ingredient: TIngredient;
+begin
+  Result := TIngredientsList.Create;
+
+  Node := FTree.GetFirstChild(nil);
+  while Assigned(Node) do
+    begin
+      Data := FTree.GetNodeData(Node);
+
+      Ingredient := TIngredient.Create;
+      Ingredient.Quantity := Data.Quantity;
+      Ingredient.Measure := Data.Measure;
+      Ingredient.Ingredient := Data.Ingredient;
+      Result.Add(Ingredient);
+
+      Node := FTree.GetNextSibling(Node);
+    end;
+end;
+
+procedure TIngredientListVisualizer.InitComponent;
+begin
+  FTree.OnGetNodeDataSize := OnGetNodeDataSize;
+  FTree.OnGetText := OnGetText;
+  FTree.OnFreeNode := OnFreeNode;
+end;
+
+procedure TIngredientListVisualizer.OnFreeNode(Sender: TBaseVirtualTree;
+  Node: PVirtualNode);
+var
+  Data: PIngredientListNodeData;
+begin
+  Data := FTree.GetNodeData(Node);
+  Finalize(Data^);
+end;
+
+procedure TIngredientListVisualizer.OnGetNodeDataSize(Sender: TBaseVirtualTree;
+  var NodeDataSize: Integer);
+begin
+  NodeDataSize := SizeOf(TIngredientListNodeData);
+end;
+
+procedure TIngredientListVisualizer.OnGetText(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType;
+  var CellText: string);
+var
+  Data: PIngredientListNodeData;
+begin
+  Data := FTree.GetNodeData(Node);
+  if Assigned(Data) then
+    begin
+      case Column of
+        0:
+          if Data.Quantity > 0 then
+            CellText := Data.Quantity.ToString
+          else
+            CellText := '';
+        1:
+          CellText := Data.Measure;
+        2:
+          CellText := Data.Ingredient;
+      end;
+    end;
+end;
+
+procedure TIngredientListVisualizer.RenderContent;
+var
+  Node: PVirtualNode;
+  Data: PIngredientListNodeData;
+  Ingredient: TIngredient;
+begin
+  for Ingredient in FList do
+    begin
+      Node := FTree.AddChild(nil);
+      Data := FTree.GetNodeData(Node);
+      Data.Quantity := Ingredient.Quantity;
+      Data.Measure := Ingredient.Measure;
+      Data.Ingredient := Ingredient.Ingredient;
+    end;
+end;
+
+procedure TIngredientListVisualizer.SetIngredients(
+  const AList: TIngredientsList);
+begin
+  FList := AList;
+end;
+
+procedure TIngredientListVisualizer.SetVirtualStringTree(
+  const ATree: TVirtualStringTree);
+begin
+  FTree := ATree;
+  InitComponent;
+end;
+
 initialization
   GlobalContainer.RegisterType<TCategoryVisualizer>.Implements<ICategoryVisualizer>;
   GlobalContainer.RegisterType<TRecipeListVisualizer>.Implements<IRecipeListVisualizer>;
   GlobalContainer.RegisterType<TRecipeDisplayVisualizer>.Implements<IRecipeDisplayVisualizer>;
+  GlobalContainer.RegisterType<TIngredientListVisualizer>.Implements<IIngredientListVisualizer>;
 end.
