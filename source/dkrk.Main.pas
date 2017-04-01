@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ImgList, Vcl.ActnList,
   HTMLUn2, HtmlView,
-  dkrk.Cookbook, dkrk.Visualizers;
+  dkrk.Cookbook, dkrk.Visualizers, dkrk.Entities;
 
 type
   TwMain = class(TForm)
@@ -55,6 +55,8 @@ type
     FRecipeListVisualizer: IRecipeListVisualizer;
     FRecipeDisplayVisualizer: IRecipeDisplayVisualizer;
     FCookbook: ICookbook;
+    function GetSelectedCategory: TCategory;
+    function IsCategorySelected: Boolean;
   public
     { Public-Deklarationen }
   end;
@@ -69,7 +71,7 @@ implementation
 uses
   dorm, dorm.Commons, dorm.ObjectStatus,
   Spring.Container,
-  dkrk.Entities, dkrk.Ingredients, dkrk.Renderers, dkrk.CategoryEditor,
+  dkrk.Ingredients, dkrk.Renderers, dkrk.CategoryEditor,
   dkrk.RecipeEditor;
 
 procedure TwMain.acAddCategoryExecute(Sender: TObject);
@@ -90,7 +92,11 @@ procedure TwMain.acAddRecipeExecute(Sender: TObject);
 var
   Recipe: TRecipe;
 begin
+  if not IsCategorySelected then
+    Exit;
+
   Recipe := TRecipe.Create;
+  Recipe.AssignedCategory := GetSelectedCategory.Id;
   if TwRecipeEditor.ExecuteDialog(Recipe) then
     begin
       FCookbook.GetSession.Persist(Recipe);
@@ -104,7 +110,7 @@ procedure TwMain.acDeleteCategoryExecute(Sender: TObject);
 var
   Category: TCategory;
 begin
-  if (lbCategories.ItemIndex > -1) and (MessageDlg('Kategorie wirklich löschen?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  if IsCategorySelected and (MessageDlg('Kategorie wirklich löschen?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     begin
       Category := TCategory(lbCategories.Items.Objects[lbCategories.ItemIndex]);
       Category.ObjStatus := osDeleted;
@@ -122,9 +128,9 @@ procedure TwMain.acEditCategoryExecute(Sender: TObject);
 var
   Category: TCategory;
 begin
-  if lbCategories.ItemIndex > -1 then
+  if IsCategorySelected then
     begin
-      Category := TCategory(lbCategories.Items.Objects[lbCategories.ItemIndex]);
+      Category := GetSelectedCategory;
       if TwCategoryEditor.ExecuteDialog(Category) then
         begin
           FCookbook.GetSession.Persist(Category);
@@ -177,13 +183,26 @@ begin
   FCookbook.Close;
 end;
 
+function TwMain.GetSelectedCategory: TCategory;
+begin
+  if IsCategorySelected then
+    Result := TCategory(lbCategories.Items.Objects[lbCategories.ItemIndex])
+  else
+    Result := nil;
+end;
+
+function TwMain.IsCategorySelected: Boolean;
+begin
+  Result := lbCategories.ItemIndex > -1;
+end;
+
 procedure TwMain.lbCategoriesClick(Sender: TObject);
 var
   Category: TCategory;
 begin
-  if lbCategories.ItemIndex > -1 then
+  if IsCategorySelected then
     begin
-      Category := TCategory(lbCategories.Items.Objects[lbCategories.ItemIndex]);
+      Category := GetSelectedCategory;
       FCookbook.GetSession.LoadRelations(Category, [drHasMany, drHasOne]);
 
       FRecipeListVisualizer.SetRecipes(Category.Recipes);
