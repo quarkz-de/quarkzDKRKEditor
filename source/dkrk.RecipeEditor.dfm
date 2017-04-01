@@ -33,7 +33,7 @@ object wRecipeEditor: TwRecipeEditor
   end
   object txPreparation: TLabel
     Left = 16
-    Top = 308
+    Top = 368
     Width = 73
     Height = 17
     Caption = 'Zubereitung:'
@@ -47,9 +47,7 @@ object wRecipeEditor: TwRecipeEditor
     Cancel = True
     Caption = 'Abbrechen'
     ModalResult = 2
-    TabOrder = 4
-    ExplicitLeft = 511
-    ExplicitTop = 248
+    TabOrder = 12
   end
   object btOk: TButton
     Left = 605
@@ -58,11 +56,8 @@ object wRecipeEditor: TwRecipeEditor
     Height = 37
     Anchors = [akRight, akBottom]
     Caption = 'Ok'
-    Default = True
     ModalResult = 1
-    TabOrder = 3
-    ExplicitLeft = 400
-    ExplicitTop = 248
+    TabOrder = 11
   end
   object edBezeichnung: TEdit
     Left = 164
@@ -101,9 +96,10 @@ object wRecipeEditor: TwRecipeEditor
     Header.Height = 21
     Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
     Header.ParentFont = True
-    TabOrder = 5
+    TabOrder = 3
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
     TreeOptions.SelectionOptions = [toFullRowSelect]
+    OnClick = stIngredientsClick
     Columns = <
       item
         Position = 0
@@ -123,10 +119,74 @@ object wRecipeEditor: TwRecipeEditor
   end
   object edPreparation: TMemo
     Left = 164
-    Top = 305
+    Top = 365
     Width = 657
     Height = 204
     ScrollBars = ssVertical
+    TabOrder = 10
+  end
+  object edQuantity: TEdit
+    Left = 164
+    Top = 295
+    Width = 62
+    Height = 25
+    TabOrder = 4
+    OnKeyDown = edQuantityKeyDown
+  end
+  object cbMeasure: TComboBox
+    Left = 232
+    Top = 295
+    Width = 106
+    Height = 25
+    TabOrder = 5
+    OnKeyDown = cbMeasureKeyDown
+  end
+  object btAdd: TButton
+    Left = 584
+    Top = 295
+    Width = 75
+    Height = 25
+    Action = acAdd
+    TabOrder = 7
+  end
+  object btChange: TButton
+    Left = 665
+    Top = 295
+    Width = 75
+    Height = 25
+    Action = acEdit
+    TabOrder = 8
+  end
+  object btDelete: TButton
+    Left = 746
+    Top = 295
+    Width = 75
+    Height = 25
+    Action = acDelete
+    TabOrder = 9
+  end
+  object cbIngredient: TComboBox
+    Left = 344
+    Top = 295
+    Width = 234
+    Height = 25
     TabOrder = 6
+    OnKeyDown = cbIngredientKeyDown
+  end
+  object ActionList1: TActionList
+    Left = 36
+    Top = 173
+    object acAdd: TAction
+      Caption = 'Hinzuf'#252'gen'
+      OnExecute = acAddExecute
+    end
+    object acEdit: TAction
+      Caption = #196'ndern'
+      OnExecute = acEditExecute
+    end
+    object acDelete: TAction
+      Caption = 'L'#246'schen'
+      OnExecute = acDeleteExecute
+    end
   end
 end

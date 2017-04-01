@@ -43,6 +43,12 @@ type
     procedure SetVirtualStringTree(const ATree: TVirtualStringTree);
     procedure SetIngredients(const AList: TIngredientsList);
     function GetIngredients: TIngredientsList;
+    procedure DeleteSelected;
+    procedure AddIngredient(const AQuantity: Single; const AMeasure, AIngredient: String);
+    procedure ChangeIngredient(const AQuantity: Single; const AMeasure, AIngredient: String);
+    function GetSelected(var AQuantity: Single; var AMeasure, AIngredient: String): Boolean;
+    procedure ClearSelection;
+    function IsSelected: Boolean;
   end;
 
 implementation
@@ -116,6 +122,12 @@ type
     function GetIngredients: TIngredientsList;
     procedure InitComponent;
     procedure RenderContent;
+    procedure DeleteSelected;
+    procedure AddIngredient(const AQuantity: Single; const AMeasure, AIngredient: String);
+    procedure ChangeIngredient(const AQuantity: Single; const AMeasure, AIngredient: String);
+    function GetSelected(var AQuantity: Single; var AMeasure, AIngredient: String): Boolean;
+    procedure ClearSelection;
+    function IsSelected: Boolean;
   end;
 
 { TCategoryVisualizer }
@@ -316,6 +328,50 @@ type
   end;
   PIngredientListNodeData = ^TIngredientListNodeData;
 
+procedure TIngredientListVisualizer.AddIngredient(const AQuantity: Single;
+  const AMeasure, AIngredient: String);
+var
+  Data: PIngredientListNodeData;
+  Node: PVirtualNode;
+begin
+  Node := FTree.AddChild(nil);
+  Data := FTree.GetNodeData(Node);
+  Data.Quantity := AQuantity;
+  Data.Measure := AMeasure;
+  Data.Ingredient := AIngredient;
+  FTree.Selected[Node] := true;
+  FTree.FocusedNode := Node;
+end;
+
+procedure TIngredientListVisualizer.ChangeIngredient(const AQuantity: Single;
+  const AMeasure, AIngredient: String);
+var
+  Data: PIngredientListNodeData;
+begin
+  if IsSelected then
+    begin
+      Data := FTree.GetNodeData(FTree.FocusedNode);
+      Data.Quantity := AQuantity;
+      Data.Measure := AMeasure;
+      Data.Ingredient := AIngredient;
+    end;
+end;
+
+procedure TIngredientListVisualizer.ClearSelection;
+begin
+  if IsSelected then
+    begin
+      FTree.Selected[FTree.FocusedNode] := false;
+      FTree.FocusedNode := nil;
+    end;
+end;
+
+procedure TIngredientListVisualizer.DeleteSelected;
+begin
+  if IsSelected then
+    FTree.DeleteNode(FTree.FocusedNode);
+end;
+
 function TIngredientListVisualizer.GetIngredients: TIngredientsList;
 var
   Node: PVirtualNode;
@@ -339,11 +395,31 @@ begin
     end;
 end;
 
+function TIngredientListVisualizer.GetSelected(var AQuantity: Single;
+  var AMeasure, AIngredient: String): Boolean;
+var
+  Data: PIngredientListNodeData;
+begin
+  Result := IsSelected;
+  if Result then
+    begin
+      Data := FTree.GetNodeData(FTree.FocusedNode);
+      AQuantity := Data.Quantity;
+      AMeasure := Data.Measure;
+      AIngredient := Data.Ingredient;
+    end;
+end;
+
 procedure TIngredientListVisualizer.InitComponent;
 begin
   FTree.OnGetNodeDataSize := OnGetNodeDataSize;
   FTree.OnGetText := OnGetText;
   FTree.OnFreeNode := OnFreeNode;
+end;
+
+function TIngredientListVisualizer.IsSelected: Boolean;
+begin
+  Result := Assigned(FTree.FocusedNode);
 end;
 
 procedure TIngredientListVisualizer.OnFreeNode(Sender: TBaseVirtualTree;

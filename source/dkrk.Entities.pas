@@ -108,6 +108,41 @@ type
     function ToString: String; override;
   end;
 
+  [Entity('Ingredients')]
+  TIngredientTemplate = class(TdormBaseObject)
+  private
+    FId: Integer;
+    FName: String;
+    FCount: Integer;
+    procedure SetId(const AValue: Integer);
+    procedure SetName(const AValue: String);
+    procedure SetCount(const AValue: Integer);
+  public
+    property Id: Integer read FId write SetId;
+    property Name: String read FName write SetName;
+    property Count: Integer read FCount write SetCount;
+  end;
+
+  [ListOf('dkrk.Entities.TIngredientTemplate')]
+  TIngredientTemplates = class(TObjectList<TIngredientTemplate>)
+  end;
+
+  [Entity('Units')]
+  TUnitTemplate = class(TdormBaseObject)
+  private
+    FId: Integer;
+    FName: String;
+    procedure SetId(const AValue: Integer);
+    procedure SetName(const AValue: String);
+  public
+    property Id: Integer read FId write SetId;
+    property Name: String read FName write SetName;
+  end;
+
+  [ListOf('dkrk.Entities.TUnitTemplate')]
+  TUnitTemplates = class(TObjectList<TUnitTemplate>)
+  end;
+
 implementation
 
 { TCategory }
@@ -344,6 +379,47 @@ end;
 function TRecipe.ToString: String;
 begin
   Result := Name;
+end;
+
+{ TIngredientTemplate }
+
+procedure TIngredientTemplate.SetCount(const AValue: Integer);
+begin
+  if FCount <> AValue then
+    begin
+      FCount := AValue;
+      ObjStatus := osDirty;
+    end;
+end;
+
+procedure TIngredientTemplate.SetId(const AValue: Integer);
+begin
+  FID := AValue;
+end;
+
+procedure TIngredientTemplate.SetName(const AValue: String);
+begin
+  if FName <> AValue then
+    begin
+      FName := AValue;
+      ObjStatus := osDirty;
+    end;
+end;
+
+{ TUnitTemplate }
+
+procedure TUnitTemplate.SetId(const AValue: Integer);
+begin
+  FID := AValue;
+end;
+
+procedure TUnitTemplate.SetName(const AValue: String);
+begin
+  if FName <> AValue then
+    begin
+      FName := AValue;
+      ObjStatus := osDirty;
+    end;
 end;
 
 end.
