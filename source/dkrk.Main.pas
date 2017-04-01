@@ -57,6 +57,8 @@ type
     FCookbook: ICookbook;
     function GetSelectedCategory: TCategory;
     function IsCategorySelected: Boolean;
+    procedure LoadRecipesOfSelectedCategory;
+    procedure LoadSelectedRecipe;
   public
     { Public-Deklarationen }
   end;
@@ -82,7 +84,10 @@ begin
   if TwCategoryEditor.ExecuteDialog(Category) then
     begin
       FCookbook.GetSession.Persist(Category);
+      Category.AssignedCategory := Category.Id;
+      FCookbook.GetSession.Persist(Category);
       FCategoryVisualizer.Add(Category);
+      LoadRecipesOfSelectedCategory;
     end
   else
     Category.Free;
@@ -97,6 +102,7 @@ begin
 
   Recipe := TRecipe.Create;
   Recipe.AssignedCategory := GetSelectedCategory.Id;
+  Recipe.AddA := GetSelectedCategory.Id.ToString;
   if TwRecipeEditor.ExecuteDialog(Recipe) then
     begin
       FCookbook.GetSession.Persist(Recipe);
@@ -197,6 +203,16 @@ begin
 end;
 
 procedure TwMain.lbCategoriesClick(Sender: TObject);
+begin
+  LoadRecipesOfSelectedCategory;
+end;
+
+procedure TwMain.lbRecipesClick(Sender: TObject);
+begin
+  LoadSelectedRecipe;
+end;
+
+procedure TwMain.LoadRecipesOfSelectedCategory;
 var
   Category: TCategory;
 begin
@@ -210,7 +226,7 @@ begin
     end;
 end;
 
-procedure TwMain.lbRecipesClick(Sender: TObject);
+procedure TwMain.LoadSelectedRecipe;
 var
   Recipe: TRecipe;
 begin
