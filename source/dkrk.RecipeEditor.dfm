@@ -62,8 +62,9 @@ object wRecipeEditor: TwRecipeEditor
   object edBezeichnung: TEdit
     Left = 164
     Top = 13
-    Width = 321
+    Width = 657
     Height = 25
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
   end
   object cbPortionen: TComboBox
@@ -122,6 +123,7 @@ object wRecipeEditor: TwRecipeEditor
     Top = 365
     Width = 657
     Height = 204
+    Anchors = [akLeft, akTop, akRight, akBottom]
     ScrollBars = ssVertical
     TabOrder = 10
   end
@@ -147,6 +149,7 @@ object wRecipeEditor: TwRecipeEditor
     Width = 75
     Height = 25
     Action = acAdd
+    Anchors = [akTop, akRight]
     TabOrder = 7
   end
   object btChange: TButton
@@ -155,6 +158,7 @@ object wRecipeEditor: TwRecipeEditor
     Width = 75
     Height = 25
     Action = acEdit
+    Anchors = [akTop, akRight]
     TabOrder = 8
   end
   object btDelete: TButton
@@ -163,6 +167,7 @@ object wRecipeEditor: TwRecipeEditor
     Width = 75
     Height = 25
     Action = acDelete
+    Anchors = [akTop, akRight]
     TabOrder = 9
   end
   object cbIngredient: TComboBox
@@ -170,6 +175,7 @@ object wRecipeEditor: TwRecipeEditor
     Top = 295
     Width = 234
     Height = 25
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 6
     OnKeyDown = cbIngredientKeyDown
   end

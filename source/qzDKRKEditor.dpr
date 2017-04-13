@@ -1,7 +1,5 @@
 program qzDKRKEditor;
 
-
-
 uses
   Vcl.Forms,
   Spring.Container,
@@ -21,7 +19,5 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TwMain, wMain);
-  Application.CreateForm(TwCategoryEditor, wCategoryEditor);
-  Application.CreateForm(TwRecipeEditor, wRecipeEditor);
   Application.Run;
 end.

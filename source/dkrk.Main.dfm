@@ -111,6 +111,7 @@ object wMain: TwMain
           ImageAlignment = iaCenter
           Images = ilImages
           TabOrder = 1
+          TabStop = False
         end
         object btDeleteCategory: TButton
           Left = 118
@@ -121,6 +122,7 @@ object wMain: TwMain
           ImageAlignment = iaCenter
           Images = ilImages
           TabOrder = 2
+          TabStop = False
         end
         object btAddCategory: TButton
           Left = 8
@@ -131,6 +133,7 @@ object wMain: TwMain
           ImageAlignment = iaCenter
           Images = ilImages
           TabOrder = 0
+          TabStop = False
         end
       end
       object lbCategories: TListBox
@@ -143,6 +146,7 @@ object wMain: TwMain
         Margins.Top = 8
         Margins.Right = 4
         Margins.Bottom = 8
+        AutoComplete = False
         Align = alClient
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
@@ -153,6 +157,8 @@ object wMain: TwMain
         ParentFont = False
         TabOrder = 0
         OnClick = lbCategoriesClick
+        OnKeyDown = lbCategoriesKeyDown
+        OnKeyPress = lbCategoriesKeyPress
       end
     end
     object pnRecipes: TPanel
@@ -183,6 +189,7 @@ object wMain: TwMain
           ImageAlignment = iaCenter
           Images = ilImages
           TabOrder = 0
+          TabStop = False
         end
         object btEditRecipe: TButton
           Left = 58
@@ -193,6 +200,7 @@ object wMain: TwMain
           ImageAlignment = iaCenter
           Images = ilImages
           TabOrder = 1
+          TabStop = False
         end
         object btDeleteRecipe: TButton
           Left = 113
@@ -203,6 +211,7 @@ object wMain: TwMain
           ImageAlignment = iaCenter
           Images = ilImages
           TabOrder = 2
+          TabStop = False
         end
       end
       object lbRecipes: TListBox
@@ -215,6 +224,7 @@ object wMain: TwMain
         Margins.Top = 8
         Margins.Right = 4
         Margins.Bottom = 8
+        AutoComplete = False
         Align = alClient
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
@@ -225,6 +235,8 @@ object wMain: TwMain
         ParentFont = False
         TabOrder = 0
         OnClick = lbRecipesClick
+        OnKeyDown = lbRecipesKeyDown
+        OnKeyPress = lbRecipesKeyPress
       end
     end
   end
@@ -236,7 +248,7 @@ object wMain: TwMain
     Left = 480
     Top = 296
     Bitmap = {
-      494C0101050008001C0018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800240018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000600000003000000001002000000000000048
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

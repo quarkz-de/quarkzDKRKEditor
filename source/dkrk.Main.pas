@@ -49,6 +49,12 @@ type
     procedure acAddRecipeExecute(Sender: TObject);
     procedure acDeleteRecipeExecute(Sender: TObject);
     procedure acEditRecipeExecute(Sender: TObject);
+    procedure lbCategoriesKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure lbRecipesKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure lbCategoriesKeyPress(Sender: TObject; var Key: Char);
+    procedure lbRecipesKeyPress(Sender: TObject; var Key: Char);
   private
     { Private-Deklarationen }
     FCategoryVisualizer: ICategoryVisualizer;
@@ -207,9 +213,71 @@ begin
   LoadRecipesOfSelectedCategory;
 end;
 
+procedure TwMain.lbCategoriesKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case Key of
+    VK_INSERT:
+      if Shift = [] then
+        begin
+          acAddCategory.Execute;
+          Key := 0;
+        end;
+    VK_DELETE:
+      if Shift = [] then
+        begin
+          acDeleteCategory.Execute;
+          Key := 0;
+        end;
+    VK_RETURN:
+      if Shift = [] then
+        begin
+          acEditCategory.Execute;
+          Key := 0;
+        end;
+  end;
+end;
+
+procedure TwMain.lbCategoriesKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+    Key := #0;
+end;
+
 procedure TwMain.lbRecipesClick(Sender: TObject);
 begin
   LoadSelectedRecipe;
+end;
+
+procedure TwMain.lbRecipesKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case Key of
+    VK_INSERT:
+      if Shift = [] then
+        begin
+          acAddRecipe.Execute;
+          Key := 0;
+        end;
+    VK_DELETE:
+      if Shift = [] then
+        begin
+          acDeleteRecipe.Execute;
+          Key := 0;
+        end;
+    VK_RETURN:
+      if Shift = [] then
+        begin
+          acEditRecipe.Execute;
+          Key := 0;
+        end;
+  end;
+end;
+
+procedure TwMain.lbRecipesKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+    Key := #0;
 end;
 
 procedure TwMain.LoadRecipesOfSelectedCategory;
