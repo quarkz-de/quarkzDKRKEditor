@@ -231,6 +231,7 @@ begin
     begin
       FRecipeListVisualizer.Clear;
       FCategoryVisualizer.Clear;
+      FRecipeDisplayVisualizer.Clear;
       txFilename.Caption := '(kein Kochbuch geöffnet)';
     end;
 end;
