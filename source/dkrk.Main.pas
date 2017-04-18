@@ -39,6 +39,10 @@ type
     acDeleteRecipe: TAction;
     hvRecipe: THtmlViewer;
     pnRecipe: TPanel;
+    pnHeader: TPanel;
+    btOpenCookbook: TButton;
+    acOpenCookbook: TAction;
+    txFilename: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbCategoriesClick(Sender: TObject);
@@ -55,6 +59,7 @@ type
       Shift: TShiftState);
     procedure lbCategoriesKeyPress(Sender: TObject; var Key: Char);
     procedure lbRecipesKeyPress(Sender: TObject; var Key: Char);
+    procedure acOpenCookbookExecute(Sender: TObject);
   private
     { Private-Deklarationen }
     FCategoryVisualizer: ICategoryVisualizer;
@@ -65,6 +70,7 @@ type
     function IsCategorySelected: Boolean;
     procedure LoadRecipesOfSelectedCategory;
     procedure LoadSelectedRecipe;
+    procedure InitCookbook;
   public
     { Public-Deklarationen }
   end;
@@ -166,6 +172,12 @@ begin
     end;
 end;
 
+procedure TwMain.acOpenCookbookExecute(Sender: TObject);
+begin
+  FCookbook.SelectAndLoad;
+  InitCookbook;
+end;
+
 procedure TwMain.FormCreate(Sender: TObject);
 begin
   FCategoryVisualizer := GlobalContainer.Resolve<ICategoryVisualizer>;
@@ -180,14 +192,10 @@ begin
   FCookbook := GlobalContainer.Resolve<ICookbook>;
 {$ifdef DEBUG}
   FCookbook.Load('d:\entw\quarkz.dx\quarkzDKRKEditor\data\kochbuch.db');
+  InitCookbook;
 {$else}
-  FCookbook.SelectAndLoad;
+  acOpenCookbook.Execute;
 {$endif}
-  if FCookbook.IsLoaded then
-    begin
-      FCategoryVisualizer.SetCategories(FCookbook.GetSession.LoadList<TCategory>);
-      FCategoryVisualizer.RenderContent;
-    end;
 end;
 
 procedure TwMain.FormDestroy(Sender: TObject);
@@ -201,6 +209,30 @@ begin
     Result := TCategory(lbCategories.Items.Objects[lbCategories.ItemIndex])
   else
     Result := nil;
+end;
+
+procedure TwMain.InitCookbook;
+begin
+  acAddCategory.Enabled := FCookbook.IsLoaded;
+  acDeleteCategory.Enabled := FCookbook.IsLoaded;
+  acEditCategory.Enabled := FCookbook.IsLoaded;
+
+  acAddRecipe.Enabled := FCookbook.IsLoaded;
+  acDeleteRecipe.Enabled := FCookbook.IsLoaded;
+  acEditRecipe.Enabled := FCookbook.IsLoaded;
+
+  if FCookbook.IsLoaded then
+    begin
+      FCategoryVisualizer.SetCategories(FCookbook.GetSession.LoadList<TCategory>);
+      FCategoryVisualizer.RenderContent;
+      txFilename.Caption := FCookbook.GetFilename;
+    end
+  else
+    begin
+      FRecipeListVisualizer.Clear;
+      FCategoryVisualizer.Clear;
+      txFilename.Caption := '(kein Kochbuch geöffnet)';
+    end;
 end;
 
 function TwMain.IsCategorySelected: Boolean;
@@ -288,7 +320,6 @@ begin
     begin
       Category := GetSelectedCategory;
       FCookbook.GetSession.LoadRelations(Category, [drHasMany, drHasOne]);
-
       FRecipeListVisualizer.SetRecipes(Category.Recipes);
       FRecipeListVisualizer.RenderContent;
     end;

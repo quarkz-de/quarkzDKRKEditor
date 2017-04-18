@@ -22,6 +22,7 @@ type
     procedure SetCategories(const ACategories: TObjectList<TCategory>);
     procedure Add(const ACategory: TCategory);
     procedure Remove(const ACategory: TCategory);
+    procedure Clear;
   end;
 
   IRecipeListVisualizer = interface(IAbstractVisualizer)
@@ -30,12 +31,14 @@ type
     procedure SetRecipes(const ARecipes: TObjectList<TRecipe>);
     procedure Add(const ARecipe: TRecipe);
     procedure Remove(const ARecipe: TRecipe);
+    procedure Clear;
   end;
 
   IRecipeDisplayVisualizer = interface(IAbstractVisualizer)
     ['{B1BD11EC-AFF6-4941-9E72-FF3E7677A262}']
     procedure SetHtmlViewer(const AHtmlViewer: THtmlViewer);
     procedure SetRecipe(const ARecipe: TRecipe);
+    procedure Clear;
   end;
 
   IIngredientListVisualizer = interface(IAbstractVisualizer)
@@ -71,6 +74,7 @@ type
     procedure RenderContent;
     procedure Add(const ACategory: TCategory);
     procedure Remove(const ACategory: TCategory);
+    procedure Clear;
   end;
 
   TRecipeListVisualizer = class(TInterfacedObject, IRecipeListVisualizer)
@@ -87,6 +91,7 @@ type
     procedure RenderContent;
     procedure Add(const ARecipe: TRecipe);
     procedure Remove(const ARecipe: TRecipe);
+    procedure Clear;
   end;
 
   TRecipeDisplayVisualizer = class(TInterfacedObject, IRecipeDisplayVisualizer)
@@ -104,6 +109,7 @@ type
     procedure SetRecipe(const ARecipe: TRecipe);
     procedure InitComponent;
     procedure RenderContent;
+    procedure Clear;
   end;
 
   TIngredientListVisualizer = class(TInterfacedObject,
@@ -137,6 +143,12 @@ begin
   FCategories.Add(ACategory);
   RenderContent;
   FListbox.ItemIndex := FListbox.Count - 1;
+end;
+
+procedure TCategoryVisualizer.Clear;
+begin
+  FCategories := nil;
+  FListbox.Count := 0;
 end;
 
 procedure TCategoryVisualizer.InitComponent;
@@ -197,6 +209,12 @@ begin
   FListbox.ItemIndex := FListbox.Count - 1;
 end;
 
+procedure TRecipeListVisualizer.Clear;
+begin
+  FRecipes := nil;
+  FListbox.Count := 0;
+end;
+
 procedure TRecipeListVisualizer.InitComponent;
 begin
   FListbox.Style := lbVirtual;
@@ -247,6 +265,12 @@ begin
 end;
 
 { TRecipeDisplayVisualizer }
+
+procedure TRecipeDisplayVisualizer.Clear;
+begin
+  FRecipe := nil;
+  FHtmlViewer.Clear;
+end;
 
 constructor TRecipeDisplayVisualizer.Create;
 begin

@@ -14,6 +14,7 @@ type
     procedure Close;
     function IsLoaded: Boolean;
     function GetSession: TSession;
+    function GetFilename: String;
   end;
 
 implementation
@@ -28,6 +29,7 @@ type
   TCookbook = class(TInterfacedObject, ICookbook)
   private
     FDormSession: TSession;
+    FFilename: String;
   public
     constructor Create;
     destructor Destroy; override;
@@ -36,6 +38,7 @@ type
     procedure Close;
     function IsLoaded: Boolean;
     function GetSession: TSession;
+    function GetFilename: String;
   end;
 
 { TCookbook }
@@ -43,6 +46,7 @@ type
 procedure TCookbook.Close;
 begin
   FreeAndNil(FDormSession);
+  FFilename := '';
 end;
 
 constructor TCookbook.Create;
@@ -55,6 +59,11 @@ destructor TCookbook.Destroy;
 begin
   Close;
   inherited;
+end;
+
+function TCookbook.GetFilename: String;
+begin
+  Result := FFilename;
 end;
 
 function TCookbook.GetSession: TSession;
@@ -82,6 +91,7 @@ begin
 {$else}
       FDormSession := TSession.CreateConfigured(Reader, TdormEnvironment.deRelease);
 {$endif}
+      FFilename := ExpandFilename(AFilename);
       Result := true;
     end
   else
@@ -102,7 +112,10 @@ begin
   if Dialog.Execute then
     Result := Load(Dialog.Filename)
   else
-    Result := false;
+    begin
+      Result := false;
+      Close;
+    end;
   Dialog.Free;
 end;
 
