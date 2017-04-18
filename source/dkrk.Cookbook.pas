@@ -4,7 +4,11 @@ interface
 
 uses
   System.SysUtils, System.Classes,
-  dorm;
+  Spring.Persistence.Core.DatabaseManager,
+  Spring.Persistence.Core.ConnectionFactory,
+  Spring.Persistence.Core.Session,
+  Spring.Persistence.Core.Interfaces,
+  Spring.Persistence.Adapters.SQLite;
 
 type
   ICookbook = interface
@@ -22,14 +26,15 @@ implementation
 uses
   Vcl.Dialogs,
   Spring.Container,
-  dorm.commons,
-  qzLib.Core.DormConfigBuilder;
+  SQLiteTable3;
 
 type
   TCookbook = class(TInterfacedObject, ICookbook)
   private
-    FDormSession: TSession;
     FFilename: String;
+    FConnection: IDBConnection;
+    FDatabase: TSQLiteDatabase;
+    FSession: TSession;
   public
     constructor Create;
     destructor Destroy; override;
@@ -41,18 +46,20 @@ type
     function GetFilename: String;
   end;
 
-{ TCookbook }
+{$REGION 'TCookbook'}
 
 procedure TCookbook.Close;
 begin
-  FreeAndNil(FDormSession);
+  FreeAndNil(FSession);
+  FreeAndNil(FDatabase);
   FFilename := '';
 end;
 
 constructor TCookbook.Create;
 begin
   inherited;
-  FDormSession := nil;
+  FDatabase := nil;
+  FSession := nil;
 end;
 
 destructor TCookbook.Destroy;
@@ -68,29 +75,26 @@ end;
 
 function TCookbook.GetSession: TSession;
 begin
-  Result := FDormSession;
+  Result := FSession;
 end;
 
 function TCookbook.IsLoaded: Boolean;
 begin
-  Result := FDormSession <> nil;
+  Result := FSession <> nil;
 end;
 
 function TCookbook.Load(const AFilename: String): Boolean;
-var
-  Reader: TTextReader;
-  Builder: IDormConfigBuilder;
 begin
   if FileExists(AFilename) then
     begin
       Close;
-      Builder := TDormSQLiteConfigBuilder.Create(AFilename);
-      Reader := TStringReader.Create(Builder.BuildConfig);
-{$ifdef DEBUG}
-      FDormSession := TSession.CreateConfigured(Reader, TdormEnvironment.deDevelopment);
-{$else}
-      FDormSession := TSession.CreateConfigured(Reader, TdormEnvironment.deRelease);
-{$endif}
+      FDatabase := TSQLiteDatabase.Create(nil);
+      FDatabase.Filename := AFilename;
+      FConnection := TSQLiteConnectionAdapter.Create(FDatabase);
+      FConnection.AutoFreeConnection := True;
+      FConnection.Connect;
+      FSession := TSession.Create(FConnection);
+
       FFilename := ExpandFilename(AFilename);
       Result := true;
     end
@@ -118,6 +122,8 @@ begin
     end;
   Dialog.Free;
 end;
+
+{$ENDREGION}
 
 initialization
   GlobalContainer.RegisterType<TCookbook>.Implements<ICookbook>.AsSingleton;

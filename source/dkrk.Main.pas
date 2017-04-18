@@ -83,8 +83,7 @@ implementation
 {$R *.dfm}
 
 uses
-  dorm, dorm.Commons, dorm.ObjectStatus,
-  Spring.Container,
+  Spring.Container, Spring.Collections,
   dkrk.Ingredients, dkrk.Renderers, dkrk.CategoryEditor,
   dkrk.RecipeEditor;
 
@@ -95,9 +94,9 @@ begin
   Category := TCategory.Create;
   if TwCategoryEditor.ExecuteDialog(Category) then
     begin
-      FCookbook.GetSession.Persist(Category);
+      FCookbook.GetSession.Save(Category);
       Category.AssignedCategory := Category.Id;
-      FCookbook.GetSession.Persist(Category);
+      FCookbook.GetSession.Save(Category);
       FCategoryVisualizer.Add(Category);
       LoadRecipesOfSelectedCategory;
     end
@@ -117,7 +116,7 @@ begin
   Recipe.AddA := GetSelectedCategory.Id.ToString;
   if TwRecipeEditor.ExecuteDialog(Recipe) then
     begin
-      FCookbook.GetSession.Persist(Recipe);
+      FCookbook.GetSession.Save(Recipe);
       FRecipeListVisualizer.Add(Recipe);
     end
   else
@@ -127,19 +126,35 @@ end;
 procedure TwMain.acDeleteCategoryExecute(Sender: TObject);
 var
   Category: TCategory;
+  Recipes: IList<TRecipe>;
 begin
-  if IsCategorySelected and (MessageDlg('Kategorie wirklich löschen?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  if IsCategorySelected then
     begin
       Category := TCategory(lbCategories.Items.Objects[lbCategories.ItemIndex]);
-      Category.ObjStatus := osDeleted;
-      FCookbook.GetSession.Persist(Category);
-      FCategoryVisualizer.Remove(Category);
+      Recipes := Category.Recipes;
+      if Recipes.Count > 0 then
+        begin
+          MessageDlg('Die Kategorie enthält noch Rezepte und kann daher nicht gelöscht werden.', mtWarning, [mbOk], 0);
+        end
+      else if (MessageDlg('Kategorie wirklich löschen?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+        begin
+          FCookbook.GetSession.Delete(Category);
+          FCategoryVisualizer.Remove(Category);
+        end;
     end;
 end;
 
 procedure TwMain.acDeleteRecipeExecute(Sender: TObject);
+var
+  Recipe: TRecipe;
 begin
-  //
+  if (lbRecipes.ItemIndex > -1) and
+    (MessageDlg('Rezept wirklich löschen?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    begin
+      Recipe := TRecipe(lbRecipes.Items.Objects[lbRecipes.ItemIndex]);
+      FCookbook.GetSession.Delete(Recipe);
+      FRecipeListVisualizer.Remove(Recipe);
+    end;
 end;
 
 procedure TwMain.acEditCategoryExecute(Sender: TObject);
@@ -151,7 +166,7 @@ begin
       Category := GetSelectedCategory;
       if TwCategoryEditor.ExecuteDialog(Category) then
         begin
-          FCookbook.GetSession.Persist(Category);
+          FCookbook.GetSession.Save(Category);
           lbCategories.Invalidate;
         end;
     end;
@@ -166,7 +181,7 @@ begin
       Recipe := TRecipe(lbRecipes.Items.Objects[lbRecipes.ItemIndex]);
       if TwRecipeEditor.ExecuteDialog(Recipe) then
         begin
-          FCookbook.GetSession.Persist(Recipe);
+          FCookbook.GetSession.Save(Recipe);
           lbRecipes.Invalidate;
         end;
     end;
@@ -212,6 +227,8 @@ begin
 end;
 
 procedure TwMain.InitCookbook;
+var
+  Categories: IList<TCategory>;
 begin
   acAddCategory.Enabled := FCookbook.IsLoaded;
   acDeleteCategory.Enabled := FCookbook.IsLoaded;
@@ -223,7 +240,8 @@ begin
 
   if FCookbook.IsLoaded then
     begin
-      FCategoryVisualizer.SetCategories(FCookbook.GetSession.LoadList<TCategory>);
+      Categories := FCookbook.GetSession.FindAll<TCategory>();
+      FCategoryVisualizer.SetCategories(Categories);
       FCategoryVisualizer.RenderContent;
       txFilename.Caption := FCookbook.GetFilename;
     end
@@ -320,7 +338,6 @@ begin
   if IsCategorySelected then
     begin
       Category := GetSelectedCategory;
-      FCookbook.GetSession.LoadRelations(Category, [drHasMany, drHasOne]);
       FRecipeListVisualizer.SetRecipes(Category.Recipes);
       FRecipeListVisualizer.RenderContent;
     end;

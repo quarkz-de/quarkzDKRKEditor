@@ -36,7 +36,7 @@ type
     procedure Render(const ARecipe: TRecipe; const AHTML: TStrings);
   end;
 
-{ TRecipeRenderer }
+{$REGION 'TRecipeRenderer'}
 
 function TRecipeRenderer.B(const AText: String): String;
 begin
@@ -141,6 +141,8 @@ begin
   Result := Format('<tr><td colspan="2"><b>%s</b></td></tr>',
     [AIngredient.Ingredient]);
 end;
+
+{$ENDREGION}
 
 initialization
   GlobalContainer.RegisterType<TRecipeRenderer>.Implements<IRecipeRenderer>;

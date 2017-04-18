@@ -45,7 +45,7 @@ type
 
 implementation
 
-{ TIngredientsSerializer }
+{$REGION 'TIngredientsSerializer'}
 
 function TIngredientsSerializer.Deserialize(
   const AValue: String): TIngredientsList;
@@ -108,7 +108,9 @@ begin
     end;
 end;
 
-{ TIngredient }
+{$ENDREGION}
+
+{$REGION 'TIngredient'}
 
 constructor TIngredient.Create(const AIsTitle: Boolean = false);
 begin
@@ -133,5 +135,7 @@ begin
   else if FQuantity = -99.0 then
     FQuantity := 0;
 end;
+
+{$ENDREGION}
 
 end.

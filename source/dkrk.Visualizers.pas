@@ -7,6 +7,7 @@ uses
   Winapi.Windows,
   Vcl.Controls, Vcl.StdCtrls,
   HtmlView, VirtualTrees,
+  Spring.Collections,
   dkrk.Entities, dkrk.Renderers, dkrk.Ingredients;
 
 type
@@ -19,7 +20,7 @@ type
   ICategoryVisualizer = interface(IAbstractVisualizer)
     ['{DC949CBD-44B6-4B01-A332-7F5BC0B95980}']
     procedure SetListbox(const AListbox: TListbox);
-    procedure SetCategories(const ACategories: TObjectList<TCategory>);
+    procedure SetCategories(const ACategories: IList<TCategory>);
     procedure Add(const ACategory: TCategory);
     procedure Remove(const ACategory: TCategory);
     procedure Clear;
@@ -28,7 +29,7 @@ type
   IRecipeListVisualizer = interface(IAbstractVisualizer)
     ['{DC949CBD-44B6-4B01-A332-7F5BC0B95980}']
     procedure SetListbox(const AListbox: TListbox);
-    procedure SetRecipes(const ARecipes: TObjectList<TRecipe>);
+    procedure SetRecipes(const ARecipes: IList<TRecipe>);
     procedure Add(const ARecipe: TRecipe);
     procedure Remove(const ARecipe: TRecipe);
     procedure Clear;
@@ -63,13 +64,13 @@ type
   TCategoryVisualizer = class(TInterfacedObject, ICategoryVisualizer)
   private
     FListbox: TListbox;
-    FCategories: TObjectList<TCategory>;
+    FCategories: IList<TCategory>;
     procedure OnData(Control: TWinControl; Index: Integer; var Data: string);
     function OnDataFind(Control: TWinControl; FindString: string): Integer;
     procedure OnDataObject(Control: TWinControl; Index: Integer; var DataObject: TObject);
   public
     procedure SetListbox(const AListbox: TListbox);
-    procedure SetCategories(const ACategories: TObjectList<TCategory>);
+    procedure SetCategories(const ACategories: IList<TCategory>);
     procedure InitComponent;
     procedure RenderContent;
     procedure Add(const ACategory: TCategory);
@@ -80,13 +81,13 @@ type
   TRecipeListVisualizer = class(TInterfacedObject, IRecipeListVisualizer)
   private
     FListbox: TListbox;
-    FRecipes: TObjectList<TRecipe>;
+    FRecipes: IList<TRecipe>;
     procedure OnData(Control: TWinControl; Index: Integer; var Data: string);
     function OnDataFind(Control: TWinControl; FindString: string): Integer;
     procedure OnDataObject(Control: TWinControl; Index: Integer; var DataObject: TObject);
   public
     procedure SetListbox(const AListbox: TListbox);
-    procedure SetRecipes(const ARecipes: TObjectList<TRecipe>);
+    procedure SetRecipes(const ARecipes: IList<TRecipe>);
     procedure InitComponent;
     procedure RenderContent;
     procedure Add(const ARecipe: TRecipe);
@@ -136,7 +137,7 @@ type
     function IsSelected: Boolean;
   end;
 
-{ TCategoryVisualizer }
+{$REGION 'TCategoryVisualizer'}
 
 procedure TCategoryVisualizer.Add(const ACategory: TCategory);
 begin
@@ -189,7 +190,7 @@ begin
 end;
 
 procedure TCategoryVisualizer.SetCategories(
-  const ACategories: TObjectList<TCategory>);
+  const ACategories: IList<TCategory>);
 begin
   FCategories := ACategories;
 end;
@@ -200,7 +201,9 @@ begin
   InitComponent;
 end;
 
-{ TRecipeListVisualizer }
+{$ENDREGION}
+
+{$REGION 'TRecipeListVisualizer'}
 
 procedure TRecipeListVisualizer.Add(const ARecipe: TRecipe);
 begin
@@ -259,12 +262,14 @@ begin
 end;
 
 procedure TRecipeListVisualizer.SetRecipes(
-  const ARecipes: TObjectList<TRecipe>);
+  const ARecipes: IList<TRecipe>);
 begin
   FRecipes := ARecipes;
 end;
 
-{ TRecipeDisplayVisualizer }
+{$ENDREGION}
+
+{$REGION 'TRecipeDisplayVisualizer'}
 
 procedure TRecipeDisplayVisualizer.Clear;
 begin
@@ -342,7 +347,9 @@ begin
   FRecipe := ARecipe;
 end;
 
-{ TIngredientListVisualizer }
+{$ENDREGION}
+
+{$REGION 'TIngredientListVisualizer'}
 
 type
   TIngredientListNodeData = record
@@ -512,6 +519,8 @@ begin
   FTree := ATree;
   InitComponent;
 end;
+
+{$ENDREGION}
 
 initialization
   GlobalContainer.RegisterType<TCategoryVisualizer>.Implements<ICategoryVisualizer>;

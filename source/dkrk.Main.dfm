@@ -169,7 +169,6 @@ object wMain: TwMain
         OnClick = lbCategoriesClick
         OnKeyDown = lbCategoriesKeyDown
         OnKeyPress = lbCategoriesKeyPress
-        ExplicitHeight = 527
       end
     end
     object pnRecipes: TPanel
@@ -250,7 +249,6 @@ object wMain: TwMain
         OnClick = lbRecipesClick
         OnKeyDown = lbRecipesKeyDown
         OnKeyPress = lbRecipesKeyPress
-        ExplicitHeight = 527
       end
     end
   end
@@ -288,7 +286,7 @@ object wMain: TwMain
     Left = 480
     Top = 296
     Bitmap = {
-      494C010106000800340018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101060008003C0018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000600000003000000001002000000000000048
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

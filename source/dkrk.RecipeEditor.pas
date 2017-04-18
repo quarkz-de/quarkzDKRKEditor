@@ -67,7 +67,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Spring.Container,
+  Spring.Container, Spring.Collections,
   dkrk.Ingredients;
 
 { TwRecipeEditor }
@@ -201,15 +201,15 @@ end;
 
 procedure TwRecipeEditor.LoadTemplates;
 var
-  IngredientTemplates: TObjectList<TIngredientTemplate>;
+  IngredientTemplates: IList<TIngredientTemplate>;
   IngredientTemplate: TIngredientTemplate;
-  UnitTemplates: TObjectList<TUnitTemplate>;
+  UnitTemplates: IList<TUnitTemplate>;
   UnitTemplate: TUnitTemplate;
 begin
-  IngredientTemplates := Cookbook.GetSession.LoadList<TIngredientTemplate>;
+  IngredientTemplates := Cookbook.GetSession.FindAll<TIngredientTemplate>();
   for IngredientTemplate in IngredientTemplates do
     cbIngredient.Items.Add(IngredientTemplate.Name);
-  UnitTemplates := Cookbook.GetSession.LoadList<TUnitTemplate>;
+  UnitTemplates := Cookbook.GetSession.FindAll<TUnitTemplate>();
   for UnitTemplate in UnitTemplates do
     cbMeasure.Items.Add(UnitTemplate.Name);
 end;
@@ -242,7 +242,7 @@ begin
     begin
       UnitTemplate := TUnitTemplate.Create;
       UnitTemplate.Name := cbMeasure.Text;
-      Cookbook.GetSession.Persist(UnitTemplate);
+      Cookbook.GetSession.Save(UnitTemplate);
       cbMeasure.Items.Add(cbMeasure.Text);
     end;
 
@@ -250,7 +250,7 @@ begin
     begin
       IngredientTemplate := TIngredientTemplate.Create;
       IngredientTemplate.Name := cbIngredient.Text;
-      Cookbook.GetSession.Persist(IngredientTemplate);
+      Cookbook.GetSession.Save(IngredientTemplate);
       cbIngredient.Items.Add(cbIngredient.Text);
     end;
 end;
