@@ -32,9 +32,6 @@ object wMain: TwMain
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 1
-    ExplicitLeft = 198
-    ExplicitTop = 20
-    ExplicitHeight = 584
     object hvRecipe: THtmlViewer
       AlignWithMargins = True
       Left = 4
@@ -59,7 +56,6 @@ object wMain: TwMain
       TabOrder = 0
       Touch.InteractiveGestures = [igPan]
       Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia]
-      ExplicitHeight = 527
     end
     object pnRecipe: TPanel
       Left = 0
@@ -70,7 +66,16 @@ object wMain: TwMain
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 1
-      ExplicitTop = 543
+      object btPrintRecipe: TButton
+        Left = 6
+        Top = 0
+        Width = 111
+        Height = 33
+        Action = acPrintRecipe
+        Images = ilImages
+        TabOrder = 0
+        TabStop = False
+      end
     end
   end
   object pnLeft: TPanel
@@ -82,8 +87,6 @@ object wMain: TwMain
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 0
-    ExplicitTop = 0
-    ExplicitHeight = 584
     object Splitter1: TSplitter
       Left = 185
       Top = 0
@@ -101,7 +104,6 @@ object wMain: TwMain
       Constraints.MinWidth = 180
       ParentColor = True
       TabOrder = 0
-      ExplicitHeight = 584
       object pnCategoryButtons: TPanel
         Left = 0
         Top = 498
@@ -111,7 +113,6 @@ object wMain: TwMain
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 1
-        ExplicitTop = 543
         object btEditCategory: TButton
           Left = 63
           Top = 0
@@ -181,7 +182,6 @@ object wMain: TwMain
       Constraints.MinWidth = 180
       ParentColor = True
       TabOrder = 1
-      ExplicitHeight = 584
       object pnRecipeButtons: TPanel
         Left = 0
         Top = 498
@@ -191,7 +191,6 @@ object wMain: TwMain
         BevelOuter = bvNone
         ParentColor = True
         TabOrder = 1
-        ExplicitTop = 543
         object btAddRecipe: TButton
           Left = 3
           Top = 0
@@ -259,7 +258,6 @@ object wMain: TwMain
     Height = 45
     Align = alTop
     TabOrder = 2
-    ExplicitTop = -3
     object txFilename: TLabel
       Left = 192
       Top = 10
@@ -286,7 +284,7 @@ object wMain: TwMain
     Left = 480
     Top = 296
     Bitmap = {
-      494C0101060008003C0018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800440018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000600000003000000001002000000000000048
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -927,5 +925,15 @@ object wMain: TwMain
       ImageIndex = 5
       OnExecute = acOpenCookbookExecute
     end
+    object acPrintRecipe: TAction
+      Category = 'Recipe'
+      Caption = 'Drucken'
+      ImageIndex = 3
+      OnExecute = acPrintRecipeExecute
+    end
+  end
+  object dPrint: TPrintDialog
+    Left = 572
+    Top = 296
   end
 end

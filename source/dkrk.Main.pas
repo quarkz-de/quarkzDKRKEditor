@@ -43,6 +43,9 @@ type
     btOpenCookbook: TButton;
     acOpenCookbook: TAction;
     txFilename: TLabel;
+    acPrintRecipe: TAction;
+    btPrintRecipe: TButton;
+    dPrint: TPrintDialog;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbCategoriesClick(Sender: TObject);
@@ -60,6 +63,7 @@ type
     procedure lbCategoriesKeyPress(Sender: TObject; var Key: Char);
     procedure lbRecipesKeyPress(Sender: TObject; var Key: Char);
     procedure acOpenCookbookExecute(Sender: TObject);
+    procedure acPrintRecipeExecute(Sender: TObject);
   private
     { Private-Deklarationen }
     FCategoryVisualizer: ICategoryVisualizer;
@@ -193,6 +197,12 @@ begin
   InitCookbook;
 end;
 
+procedure TwMain.acPrintRecipeExecute(Sender: TObject);
+begin
+  if dPrint.Execute then
+    hvRecipe.Print();
+end;
+
 procedure TwMain.FormCreate(Sender: TObject);
 begin
   FCategoryVisualizer := GlobalContainer.Resolve<ICategoryVisualizer>;
@@ -237,6 +247,8 @@ begin
   acAddRecipe.Enabled := FCookbook.IsLoaded;
   acDeleteRecipe.Enabled := FCookbook.IsLoaded;
   acEditRecipe.Enabled := FCookbook.IsLoaded;
+
+  acPrintRecipe.Enabled := FCookbook.IsLoaded;
 
   if FCookbook.IsLoaded then
     begin
