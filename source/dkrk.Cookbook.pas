@@ -91,7 +91,7 @@ begin
       FDatabase := TSQLiteDatabase.Create(nil);
       FDatabase.Filename := AFilename;
       FConnection := TSQLiteConnectionAdapter.Create(FDatabase);
-      FConnection.AutoFreeConnection := True;
+      FConnection.AutoFreeConnection := false;
       FConnection.Connect;
       FSession := TSession.Create(FConnection);
 
