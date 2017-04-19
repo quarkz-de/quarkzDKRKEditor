@@ -91,6 +91,7 @@ begin
   AHTML.Add('<head>');
   AHTML.Add('  <meta http-equiv="Content-Style-Type" content="text/css">');
   AHTML.Add('  <link rel="Stylesheet" type="text/css" href="CSS_RECIPE">');
+  AHTML.Add(Format('  <title>%s</title>', [ARecipe.ToString]));
   AHTML.Add('</head>');
   AHTML.Add('<body>');
 
