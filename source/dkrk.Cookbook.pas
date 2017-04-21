@@ -35,6 +35,7 @@ type
     FConnection: IDBConnection;
     FDatabase: TSQLiteDatabase;
     FSession: TSession;
+    procedure BuildDatabase;
   public
     constructor Create;
     destructor Destroy; override;
@@ -47,6 +48,18 @@ type
   end;
 
 {$REGION 'TCookbook'}
+
+procedure TCookbook.BuildDatabase;
+var
+  DBManager: TDatabaseManager;
+begin
+  DBManager := TDatabaseManager.Create(FConnection);
+  try
+    DBManager.BuildDatabase;
+  finally
+    DBManager.Free;
+  end;
+end;
 
 procedure TCookbook.Close;
 begin
@@ -94,6 +107,8 @@ begin
       FConnection.AutoFreeConnection := false;
       FConnection.Connect;
       FSession := TSession.Create(FConnection);
+
+      BuildDatabase;
 
       FFilename := ExpandFilename(AFilename);
       Result := true;
