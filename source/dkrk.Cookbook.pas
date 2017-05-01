@@ -124,7 +124,7 @@ var
   Dialog: TOpenDialog;
 begin
   Dialog := TOpenDialog.Create(nil);
-  Dialog.Filter := 'SQLite-Dateien (*.db;*sqlite;*.sqlite3)|*.db;*.sqlite;*.sqlite3|Alle Dateien (*.*)|*.*';
+  Dialog.Filter := 'SQLite-Dateien (*.db;*.sqlite;*.sqlite3)|*.db;*.sqlite;*.sqlite3|Alle Dateien (*.*)|*.*';
   Dialog.DefaultExt := 'db';
   Dialog.Filename := 'kochbuch.db';
   Dialog.Options := [ofHideReadOnly, ofFileMustExist, ofEnableSizing];
