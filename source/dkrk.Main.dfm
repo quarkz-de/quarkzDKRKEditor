@@ -66,6 +66,7 @@ object wMain: TwMain
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 1
+      ExplicitTop = 501
       object btPrintRecipe: TButton
         Left = 6
         Top = 0
@@ -74,6 +75,16 @@ object wMain: TwMain
         Action = acPrintRecipe
         Images = ilImages
         TabOrder = 0
+        TabStop = False
+      end
+      object btSaveRecipeAsPDF: TButton
+        Left = 123
+        Top = 0
+        Width = 111
+        Height = 33
+        Action = acSaveRecipeAsPDF
+        Images = ilImages
+        TabOrder = 1
         TabStop = False
       end
     end
@@ -285,7 +296,7 @@ object wMain: TwMain
     Left = 480
     Top = 296
     Bitmap = {
-      494C010106000800480018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101060008004C0018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000600000003000000001002000000000000048
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -932,9 +943,23 @@ object wMain: TwMain
       ImageIndex = 3
       OnExecute = acPrintRecipeExecute
     end
+    object acSaveRecipeAsPDF: TAction
+      Category = 'Recipe'
+      Caption = 'Speichern'
+      ImageIndex = 4
+      OnExecute = acSaveRecipeAsPDFExecute
+    end
   end
   object dPrint: TPrintDialog
     Left = 572
+    Top = 296
+  end
+  object dExport: TSaveDialog
+    DefaultExt = 'pdf'
+    Filter = 'Portable Document Format (*.pdf)|*.pdf'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
+    Title = 'Rezept als PDF speichern'
+    Left = 616
     Top = 296
   end
 end

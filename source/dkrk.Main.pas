@@ -3,9 +3,9 @@ unit dkrk.Main;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, System.Generics.Collections, System.Actions,
-  System.ImageList, System.UITypes,
+  Winapi.Windows, Winapi.Messages, WinApi.ShlObj, WinApi.ShellApi,
+  System.SysUtils, System.Variants, System.Classes, System.Generics.Collections,
+  System.Actions, System.ImageList, System.UITypes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ImgList, Vcl.ActnList,
   HTMLUn2, HtmlView,
@@ -46,6 +46,9 @@ type
     acPrintRecipe: TAction;
     btPrintRecipe: TButton;
     dPrint: TPrintDialog;
+    btSaveRecipeAsPDF: TButton;
+    acSaveRecipeAsPDF: TAction;
+    dExport: TSaveDialog;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbCategoriesClick(Sender: TObject);
@@ -64,6 +67,7 @@ type
     procedure lbRecipesKeyPress(Sender: TObject; var Key: Char);
     procedure acOpenCookbookExecute(Sender: TObject);
     procedure acPrintRecipeExecute(Sender: TObject);
+    procedure acSaveRecipeAsPDFExecute(Sender: TObject);
   private
     { Private-Deklarationen }
     FCategoryVisualizer: ICategoryVisualizer;
@@ -88,6 +92,7 @@ implementation
 
 uses
   Spring.Container, Spring.Collections,
+  qzLib.Core.HtmlViewerPdfWriter,
   dkrk.Ingredients, dkrk.Renderers, dkrk.CategoryEditor,
   dkrk.RecipeEditor;
 
@@ -201,6 +206,30 @@ procedure TwMain.acPrintRecipeExecute(Sender: TObject);
 begin
   if dPrint.Execute then
     hvRecipe.Print();
+end;
+
+procedure TwMain.acSaveRecipeAsPDFExecute(Sender: TObject);
+var
+  Writer: IHtmlViewerPdfWriter;
+  Recipe: TRecipe;
+  PFilename: PChar;
+begin
+  if lbRecipes.ItemIndex > -1 then
+    begin
+      Recipe := TRecipe(lbRecipes.Items.Objects[lbRecipes.ItemIndex]);
+
+      PFilename := PChar(Recipe.Name + '.pdf');
+      PathCleanupSpec(nil, PFilename);
+      dExport.FileName := StrPas(PFilename);
+
+      if dExport.Execute then
+        begin
+          Writer := THtmlViewerPdfWriter.Create(hvRecipe);
+          Writer.SaveToFile(dExport.FileName);
+
+          ShellExecute(0, 'open', PChar(dExport.FileName), nil, nil, SW_SHOWNORMAL);
+        end;
+    end;
 end;
 
 procedure TwMain.FormCreate(Sender: TObject);
