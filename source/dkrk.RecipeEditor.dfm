@@ -47,7 +47,7 @@ object wRecipeEditor: TwRecipeEditor
     Cancel = True
     Caption = 'Abbrechen'
     ModalResult = 2
-    TabOrder = 12
+    TabOrder = 13
   end
   object btOk: TButton
     Left = 605
@@ -57,7 +57,7 @@ object wRecipeEditor: TwRecipeEditor
     Anchors = [akRight, akBottom]
     Caption = 'Ok'
     ModalResult = 1
-    TabOrder = 11
+    TabOrder = 12
   end
   object edBezeichnung: TEdit
     Left = 164
@@ -98,9 +98,13 @@ object wRecipeEditor: TwRecipeEditor
     Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
     Header.ParentFont = True
     TabOrder = 3
+    TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoSort, toAutoTristateTracking, toAutoChangeScale]
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
     TreeOptions.SelectionOptions = [toFullRowSelect]
-    OnClick = stIngredientsClick
+    OnChange = stIngredientsChange
+    OnDragAllowed = stIngredientsDragAllowed
+    OnDragOver = stIngredientsDragOver
+    OnDragDrop = stIngredientsDragDrop
     Columns = <
       item
         Position = 0
@@ -125,7 +129,7 @@ object wRecipeEditor: TwRecipeEditor
     Height = 204
     Anchors = [akLeft, akTop, akRight, akBottom]
     ScrollBars = ssVertical
-    TabOrder = 10
+    TabOrder = 11
   end
   object edQuantity: TEdit
     Left = 164
@@ -150,7 +154,7 @@ object wRecipeEditor: TwRecipeEditor
     Height = 25
     Action = acAdd
     Anchors = [akTop, akRight]
-    TabOrder = 7
+    TabOrder = 8
   end
   object btChange: TButton
     Left = 665
@@ -159,7 +163,7 @@ object wRecipeEditor: TwRecipeEditor
     Height = 25
     Action = acEdit
     Anchors = [akTop, akRight]
-    TabOrder = 8
+    TabOrder = 9
   end
   object btDelete: TButton
     Left = 746
@@ -168,7 +172,7 @@ object wRecipeEditor: TwRecipeEditor
     Height = 25
     Action = acDelete
     Anchors = [akTop, akRight]
-    TabOrder = 9
+    TabOrder = 10
   end
   object cbIngredient: TComboBox
     Left = 344
@@ -178,6 +182,16 @@ object wRecipeEditor: TwRecipeEditor
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 6
     OnKeyDown = cbIngredientKeyDown
+  end
+  object cbTitle: TCheckBox
+    Left = 164
+    Top = 326
+    Width = 170
+    Height = 17
+    Caption = 'Zwischen'#252'berschrift'
+    TabOrder = 7
+    OnClick = cbTitleClick
+    OnKeyDown = cbTitleKeyDown
   end
   object ActionList1: TActionList
     Left = 36

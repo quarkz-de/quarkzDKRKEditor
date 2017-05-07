@@ -48,9 +48,12 @@ type
     procedure SetIngredients(const AList: TIngredientsList);
     function GetIngredients: TIngredientsList;
     procedure DeleteSelected;
-    procedure AddIngredient(const AQuantity: Single; const AMeasure, AIngredient: String);
-    procedure ChangeIngredient(const AQuantity: Single; const AMeasure, AIngredient: String);
-    function GetSelected(var AQuantity: Single; var AMeasure, AIngredient: String): Boolean;
+    procedure AddIngredient(const AQuantity: Single; const AMeasure, AIngredient: String;
+      const AIsTitle: Boolean);
+    procedure ChangeIngredient(const AQuantity: Single; const AMeasure, AIngredient: String;
+      const AIsTitle: Boolean);
+    function GetSelected(var AQuantity: Single; var AMeasure, AIngredient: String;
+      var AIsTitle: Boolean): Boolean;
     procedure ClearSelection;
     function IsSelected: Boolean;
   end;
@@ -122,6 +125,9 @@ type
       var NodeDataSize: Integer);
     procedure OnGetText(Sender: TBaseVirtualTree; Node: PVirtualNode;
       Column: TColumnIndex; TextType: TVSTTextType; var CellText: string);
+    procedure OnDrawText(Sender: TBaseVirtualTree;
+      TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+      const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
     procedure OnFreeNode(Sender: TBaseVirtualTree; Node: PVirtualNode);
   public
     procedure SetVirtualStringTree(const ATree: TVirtualStringTree);
@@ -130,9 +136,12 @@ type
     procedure InitComponent;
     procedure RenderContent;
     procedure DeleteSelected;
-    procedure AddIngredient(const AQuantity: Single; const AMeasure, AIngredient: String);
-    procedure ChangeIngredient(const AQuantity: Single; const AMeasure, AIngredient: String);
-    function GetSelected(var AQuantity: Single; var AMeasure, AIngredient: String): Boolean;
+    procedure AddIngredient(const AQuantity: Single; const AMeasure, AIngredient: String;
+      const AIsTitle: Boolean);
+    procedure ChangeIngredient(const AQuantity: Single; const AMeasure, AIngredient: String;
+      const AIsTitle: Boolean);
+    function GetSelected(var AQuantity: Single; var AMeasure, AIngredient: String;
+      var AIsTitle: Boolean): Boolean;
     procedure ClearSelection;
     function IsSelected: Boolean;
   end;
@@ -356,11 +365,12 @@ type
     Quantity: Single;
     Measure: String;
     Ingredient: String;
+    IsTitle: Boolean;
   end;
   PIngredientListNodeData = ^TIngredientListNodeData;
 
 procedure TIngredientListVisualizer.AddIngredient(const AQuantity: Single;
-  const AMeasure, AIngredient: String);
+  const AMeasure, AIngredient: String; const AIsTitle: Boolean);
 var
   Data: PIngredientListNodeData;
   Node: PVirtualNode;
@@ -370,12 +380,13 @@ begin
   Data.Quantity := AQuantity;
   Data.Measure := AMeasure;
   Data.Ingredient := AIngredient;
+  Data.IsTitle := AIsTitle;
   FTree.Selected[Node] := true;
   FTree.FocusedNode := Node;
 end;
 
 procedure TIngredientListVisualizer.ChangeIngredient(const AQuantity: Single;
-  const AMeasure, AIngredient: String);
+  const AMeasure, AIngredient: String; const AIsTitle: Boolean);
 var
   Data: PIngredientListNodeData;
 begin
@@ -385,6 +396,7 @@ begin
       Data.Quantity := AQuantity;
       Data.Measure := AMeasure;
       Data.Ingredient := AIngredient;
+      Data.IsTitle := AIsTitle;
     end;
 end;
 
@@ -420,6 +432,7 @@ begin
       Ingredient.Quantity := Data.Quantity;
       Ingredient.Measure := Data.Measure;
       Ingredient.Ingredient := Data.Ingredient;
+      Ingredient.IsTitle := Data.IsTitle;
       Result.Add(Ingredient);
 
       Node := FTree.GetNextSibling(Node);
@@ -427,7 +440,7 @@ begin
 end;
 
 function TIngredientListVisualizer.GetSelected(var AQuantity: Single;
-  var AMeasure, AIngredient: String): Boolean;
+  var AMeasure, AIngredient: String; var AIsTitle: Boolean): Boolean;
 var
   Data: PIngredientListNodeData;
 begin
@@ -438,6 +451,7 @@ begin
       AQuantity := Data.Quantity;
       AMeasure := Data.Measure;
       AIngredient := Data.Ingredient;
+      AIsTitle := Data.IsTitle;
     end;
 end;
 
@@ -445,12 +459,29 @@ procedure TIngredientListVisualizer.InitComponent;
 begin
   FTree.OnGetNodeDataSize := OnGetNodeDataSize;
   FTree.OnGetText := OnGetText;
+  FTree.OnDrawText := OnDrawText;
   FTree.OnFreeNode := OnFreeNode;
 end;
 
 function TIngredientListVisualizer.IsSelected: Boolean;
 begin
   Result := Assigned(FTree.FocusedNode);
+end;
+
+procedure TIngredientListVisualizer.OnDrawText(Sender: TBaseVirtualTree;
+  TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex;
+  const Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
+var
+  Data: PIngredientListNodeData;
+begin
+  Data := FTree.GetNodeData(Node);
+  if Assigned(Data) then
+    begin
+      if Data.IsTitle then
+        TargetCanvas.Font.Style := [fsBold]
+      else
+        TargetCanvas.Font.Style := [];
+    end;
 end;
 
 procedure TIngredientListVisualizer.OnFreeNode(Sender: TBaseVirtualTree;
@@ -484,7 +515,10 @@ begin
           else
             CellText := '';
         1:
-          CellText := Data.Measure;
+          if Data.IsTitle then
+            CellText := ''
+          else
+            CellText := Data.Measure;
         2:
           CellText := Data.Ingredient;
       end;
@@ -504,6 +538,7 @@ begin
       Data.Quantity := Ingredient.Quantity;
       Data.Measure := Ingredient.Measure;
       Data.Ingredient := Ingredient.Ingredient;
+      Data.IsTitle := Ingredient.IsTitle;
     end;
 end;
 

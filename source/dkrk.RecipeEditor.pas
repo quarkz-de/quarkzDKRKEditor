@@ -3,8 +3,8 @@ unit dkrk.RecipeEditor;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, System.Generics.Collections, System.Actions,
+  Winapi.Windows, Winapi.Messages, Winapi.ActiveX, System.SysUtils,
+  System.Variants, System.Classes, System.Generics.Collections, System.Actions,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ActnList, VirtualTrees,
   dkrk.Entities, dkrk.Visualizers, dkrk.Cookbook;
@@ -31,17 +31,29 @@ type
     acEdit: TAction;
     acDelete: TAction;
     cbIngredient: TComboBox;
+    cbTitle: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure acEditExecute(Sender: TObject);
     procedure acDeleteExecute(Sender: TObject);
     procedure acAddExecute(Sender: TObject);
     procedure cbIngredientKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure stIngredientsClick(Sender: TObject);
     procedure edQuantityKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure cbMeasureKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure cbTitleKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure stIngredientsDragAllowed(Sender: TBaseVirtualTree;
+      Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
+    procedure stIngredientsDragOver(Sender: TBaseVirtualTree; Source: TObject;
+      Shift: TShiftState; State: TDragState; Pt: TPoint; Mode: TDropMode;
+      var Effect: Integer; var Accept: Boolean);
+    procedure stIngredientsDragDrop(Sender: TBaseVirtualTree; Source: TObject;
+      DataObject: IDataObject; Formats: TFormatArray; Shift: TShiftState;
+      Pt: TPoint; var Effect: Integer; Mode: TDropMode);
+    procedure cbTitleClick(Sender: TObject);
+    procedure stIngredientsChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
   private
     { Private-Deklarationen }
     Cookbook: ICookbook;
@@ -53,6 +65,7 @@ type
     procedure UpdateTemplates;
     procedure ClearIngredientInput;
     procedure LoadSelectedIngredient;
+    procedure UpdateEditComponents;
   public
     { Public-Deklarationen }
     function Execute(const ARecipe: TRecipe): Boolean;
@@ -75,7 +88,7 @@ uses
 procedure TwRecipeEditor.acAddExecute(Sender: TObject);
 begin
   ListVisualizer.AddIngredient(String(edQuantity.Text).ToSingle,
-    cbMeasure.Text, cbIngredient.Text);
+    cbMeasure.Text, cbIngredient.Text, cbTitle.Checked);
   UpdateTemplates;
   ClearIngredientInput;
 end;
@@ -89,7 +102,7 @@ end;
 procedure TwRecipeEditor.acEditExecute(Sender: TObject);
 begin
   ListVisualizer.ChangeIngredient(String(edQuantity.Text).ToSingle,
-    cbMeasure.Text, cbIngredient.Text);
+    cbMeasure.Text, cbIngredient.Text, cbTitle.Checked);
   UpdateTemplates;
   ClearIngredientInput;
 end;
@@ -127,11 +140,42 @@ begin
   end;
 end;
 
+procedure TwRecipeEditor.cbTitleClick(Sender: TObject);
+begin
+  UpdateEditComponents;
+end;
+
+procedure TwRecipeEditor.cbTitleKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case Key of
+    VK_RETURN:
+      begin
+        if ListVisualizer.IsSelected then
+          acEdit.Execute
+        else
+          acAdd.Execute;
+      end;
+    VK_INSERT:
+      begin
+        if Shift = [ssShift] then
+          acAdd.Execute;
+      end;
+    VK_DELETE:
+      begin
+        if Shift = [ssShift] then
+          acDelete.Execute;
+      end;
+  end;
+end;
+
 procedure TwRecipeEditor.ClearIngredientInput;
 begin
   edQuantity.Text := '';
   cbMeasure.Text := '';
   cbIngredient.Text := '';
+  cbTitle.Checked := false;
+  UpdateEditComponents;
   ListVisualizer.ClearSelection;
   edQuantity.SetFocus;
 end;
@@ -190,12 +234,14 @@ procedure TwRecipeEditor.LoadSelectedIngredient;
 var
   Quantity: Single;
   Measure, Ingredient: String;
+  IsTitle: Boolean;
 begin
-  if ListVisualizer.GetSelected(Quantity, Measure, Ingredient) then
+  if ListVisualizer.GetSelected(Quantity, Measure, Ingredient, IsTitle) then
     begin
       edQuantity.Text := Quantity.ToString;
       cbMeasure.Text := Measure;
       cbIngredient.Text := Ingredient;
+      cbTitle.Checked := IsTitle;
     end;
 end;
 
@@ -228,9 +274,54 @@ begin
   IngredientList.Free;
 end;
 
-procedure TwRecipeEditor.stIngredientsClick(Sender: TObject);
+procedure TwRecipeEditor.stIngredientsChange(Sender: TBaseVirtualTree;
+  Node: PVirtualNode);
 begin
   LoadSelectedIngredient;
+end;
+
+procedure TwRecipeEditor.stIngredientsDragAllowed(Sender: TBaseVirtualTree;
+  Node: PVirtualNode; Column: TColumnIndex; var Allowed: Boolean);
+begin
+  Allowed := true;
+end;
+
+procedure TwRecipeEditor.stIngredientsDragDrop(Sender: TBaseVirtualTree;
+  Source: TObject; DataObject: IDataObject; Formats: TFormatArray;
+  Shift: TShiftState; Pt: TPoint; var Effect: Integer; Mode: TDropMode);
+var
+  SourceNode, TargetNode: PVirtualNode;
+  AttMode: TVTNodeAttachMode;
+begin
+  SourceNode := TVirtualStringTree(Source).FocusedNode;
+  TargetNode := Sender.DropTargetNode;
+
+  case Mode of
+    dmNowhere:
+      AttMode := amNoWhere;
+    dmAbove:
+      AttMode := amInsertBefore;
+    dmOnNode, dmBelow:
+      AttMode := amInsertAfter;
+  end;
+
+  Sender.MoveTo(SourceNode, TargetNode, AttMode, false);
+end;
+
+procedure TwRecipeEditor.stIngredientsDragOver(Sender: TBaseVirtualTree;
+  Source: TObject; Shift: TShiftState; State: TDragState; Pt: TPoint;
+  Mode: TDropMode; var Effect: Integer; var Accept: Boolean);
+begin
+  Accept := (Source = Sender);
+end;
+
+procedure TwRecipeEditor.UpdateEditComponents;
+begin
+  if cbTitle.Checked then
+    begin
+      edQuantity.Text := '';
+      cbMeasure.Text := '';
+    end;
 end;
 
 procedure TwRecipeEditor.UpdateTemplates;
