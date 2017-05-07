@@ -134,6 +134,9 @@ begin
     FQuantity := -99.0
   else if FQuantity = -99.0 then
     FQuantity := 0;
+
+  if Value then
+    FMeasure := '';
 end;
 
 {$ENDREGION}
