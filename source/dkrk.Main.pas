@@ -127,6 +127,7 @@ begin
     begin
       FCookbook.GetSession.Save(Recipe);
       FRecipeListVisualizer.Add(Recipe);
+      LoadSelectedRecipe;
     end
   else
     Recipe.Free;
@@ -192,6 +193,7 @@ begin
         begin
           FCookbook.GetSession.Save(Recipe);
           lbRecipes.Invalidate;
+          LoadSelectedRecipe;
         end;
     end;
 end;
@@ -303,6 +305,7 @@ end;
 procedure TwMain.lbCategoriesClick(Sender: TObject);
 begin
   LoadRecipesOfSelectedCategory;
+  LoadSelectedRecipe;
 end;
 
 procedure TwMain.lbCategoriesKeyDown(Sender: TObject; var Key: Word;
@@ -393,6 +396,10 @@ begin
       Recipe := TRecipe(lbRecipes.Items.Objects[lbRecipes.ItemIndex]);
       FRecipeDisplayVisualizer.SetRecipe(Recipe);
       FRecipeDisplayVisualizer.RenderContent;
+    end
+  else
+    begin
+      FRecipeDisplayVisualizer.Clear;
     end;
 end;
 
