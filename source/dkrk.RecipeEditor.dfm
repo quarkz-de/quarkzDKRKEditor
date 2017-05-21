@@ -5,6 +5,8 @@ object wRecipeEditor: TwRecipeEditor
   ClientHeight = 650
   ClientWidth = 840
   Color = clWhite
+  Constraints.MinHeight = 600
+  Constraints.MinWidth = 800
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
@@ -43,6 +45,7 @@ object wRecipeEditor: TwRecipeEditor
     Top = 565
     Width = 40
     Height = 17
+    Anchors = [akLeft, akBottom]
     Caption = 'Quelle:'
   end
   object txDiffRating: TLabel
@@ -50,6 +53,7 @@ object wRecipeEditor: TwRecipeEditor
     Top = 519
     Width = 78
     Height = 17
+    Anchors = [akLeft, akBottom]
     Caption = 'Schwierigkeit:'
   end
   object txRating: TLabel
@@ -57,7 +61,7 @@ object wRecipeEditor: TwRecipeEditor
     Top = 519
     Width = 64
     Height = 17
-    Anchors = [akTop, akRight]
+    Anchors = [akRight, akBottom]
     Caption = 'Bewertung:'
   end
   object txPrepDuration: TLabel
@@ -123,6 +127,7 @@ object wRecipeEditor: TwRecipeEditor
     Top = 88
     Width = 697
     Height = 201
+    Anchors = [akLeft, akTop, akRight]
     Header.AutoSizeIndex = 2
     Header.Height = 21
     Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
@@ -228,6 +233,7 @@ object wRecipeEditor: TwRecipeEditor
     Top = 511
     Width = 244
     Height = 45
+    Anchors = [akLeft, akBottom]
     Max = 8
     TabOrder = 13
   end
@@ -236,7 +242,7 @@ object wRecipeEditor: TwRecipeEditor
     Top = 511
     Width = 244
     Height = 45
-    Anchors = [akTop, akRight]
+    Anchors = [akRight, akBottom]
     Max = 8
     TabOrder = 14
   end
@@ -245,7 +251,7 @@ object wRecipeEditor: TwRecipeEditor
     Top = 562
     Width = 696
     Height = 25
-    Anchors = [akLeft, akTop, akRight]
+    Anchors = [akLeft, akRight, akBottom]
     TabOrder = 15
   end
   object edPrepDuration: TEdit
