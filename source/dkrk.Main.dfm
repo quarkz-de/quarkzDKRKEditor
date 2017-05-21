@@ -178,6 +178,7 @@ object wMain: TwMain
         ParentFont = False
         TabOrder = 0
         OnClick = lbCategoriesClick
+        OnDblClick = lbCategoriesDblClick
         OnKeyDown = lbCategoriesKeyDown
         OnKeyPress = lbCategoriesKeyPress
       end
@@ -256,6 +257,7 @@ object wMain: TwMain
         ParentFont = False
         TabOrder = 0
         OnClick = lbRecipesClick
+        OnDblClick = lbRecipesDblClick
         OnKeyDown = lbRecipesKeyDown
         OnKeyPress = lbRecipesKeyPress
       end
@@ -295,7 +297,7 @@ object wMain: TwMain
     Left = 480
     Top = 296
     Bitmap = {
-      494C010106000800500018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000800540018001800FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000600000003000000001002000000000000048
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

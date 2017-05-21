@@ -68,6 +68,8 @@ type
     procedure acOpenCookbookExecute(Sender: TObject);
     procedure acPrintRecipeExecute(Sender: TObject);
     procedure acSaveRecipeAsPDFExecute(Sender: TObject);
+    procedure lbCategoriesDblClick(Sender: TObject);
+    procedure lbRecipesDblClick(Sender: TObject);
   private
     { Private-Deklarationen }
     FCategoryVisualizer: ICategoryVisualizer;
@@ -308,6 +310,11 @@ begin
   LoadSelectedRecipe;
 end;
 
+procedure TwMain.lbCategoriesDblClick(Sender: TObject);
+begin
+  acEditCategory.Execute;
+end;
+
 procedure TwMain.lbCategoriesKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
@@ -342,6 +349,11 @@ end;
 procedure TwMain.lbRecipesClick(Sender: TObject);
 begin
   LoadSelectedRecipe;
+end;
+
+procedure TwMain.lbRecipesDblClick(Sender: TObject);
+begin
+  acEditRecipe.Execute;
 end;
 
 procedure TwMain.lbRecipesKeyDown(Sender: TObject; var Key: Word;
