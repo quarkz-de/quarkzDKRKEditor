@@ -7,7 +7,7 @@ uses
   System.Variants, System.Classes, System.Generics.Collections, System.Actions,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ActnList, VirtualTrees,
-  dkrk.Entities, dkrk.Visualizers, dkrk.Cookbook;
+  dkrk.Entities, dkrk.Visualizers, dkrk.Cookbook, Vcl.ComCtrls;
 
 type
   TwRecipeEditor = class(TForm)
@@ -26,12 +26,20 @@ type
     btAdd: TButton;
     btChange: TButton;
     btDelete: TButton;
-    ActionList1: TActionList;
+    alActions: TActionList;
     acAdd: TAction;
     acEdit: TAction;
     acDelete: TAction;
     cbIngredient: TComboBox;
     cbTitle: TCheckBox;
+    tbDiffRating: TTrackBar;
+    tbRating: TTrackBar;
+    txSource: TLabel;
+    edSource: TEdit;
+    txDiffRating: TLabel;
+    txRating: TLabel;
+    edPrepDuration: TEdit;
+    txPrepDuration: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure acEditExecute(Sender: TObject);
     procedure acDeleteExecute(Sender: TObject);
@@ -223,8 +231,13 @@ begin
   edBezeichnung.Text := Recipe.Name;
   edPortionen.Text := Recipe.Count.ToString;
   cbPortionen.Text := Recipe.CountText;
+  edPrepDuration.Text := Recipe.PrepDuration.ToString;
 
   edPreparation.Text := Recipe.Preparation.Replace(#10, #13#10);
+
+  tbDiffRating.Position := Recipe.DiffRating div 2;
+  tbRating.Position := Recipe.Rating div 2;
+  edSource.Text := Recipe.Source;
 
   ListVisualizer.SetIngredients(Recipe.IngredientsList);
   ListVisualizer.RenderContent;
@@ -267,7 +280,12 @@ begin
   Recipe.Name := edBezeichnung.Text;
   Recipe.Count := String(edPortionen.Text).ToInteger;
   Recipe.CountText := cbPortionen.Text;
+  Recipe.PrepDuration := String(edPrepDuration.Text).ToInteger;
   Recipe.Preparation := String(edPreparation.Text).Replace(#13#10, #10);
+
+  Recipe.DiffRating := tbDiffRating.Position * 2;
+  Recipe.Rating := tbRating.Position * 2;
+  Recipe.Source := edSource.Text;
 
   IngredientList := ListVisualizer.GetIngredients;
   Recipe.IngredientsList := IngredientList;

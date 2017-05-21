@@ -38,6 +38,36 @@ object wRecipeEditor: TwRecipeEditor
     Height = 17
     Caption = 'Zubereitung:'
   end
+  object txSource: TLabel
+    Left = 16
+    Top = 565
+    Width = 40
+    Height = 17
+    Caption = 'Quelle:'
+  end
+  object txDiffRating: TLabel
+    Left = 16
+    Top = 519
+    Width = 78
+    Height = 17
+    Caption = 'Schwierigkeit:'
+  end
+  object txRating: TLabel
+    Left = 469
+    Top = 519
+    Width = 64
+    Height = 17
+    Anchors = [akTop, akRight]
+    Caption = 'Bewertung:'
+  end
+  object txPrepDuration: TLabel
+    Left = 627
+    Top = 52
+    Width = 113
+    Height = 17
+    Anchors = [akTop, akRight]
+    Caption = 'Zubereitungsdauer:'
+  end
   object btCancel: TButton
     Left = 716
     Top = 599
@@ -47,7 +77,7 @@ object wRecipeEditor: TwRecipeEditor
     Cancel = True
     Caption = 'Abbrechen'
     ModalResult = 2
-    TabOrder = 13
+    TabOrder = 17
   end
   object btOk: TButton
     Left = 605
@@ -57,18 +87,18 @@ object wRecipeEditor: TwRecipeEditor
     Anchors = [akRight, akBottom]
     Caption = 'Ok'
     ModalResult = 1
-    TabOrder = 12
+    TabOrder = 16
   end
   object edBezeichnung: TEdit
-    Left = 164
+    Left = 124
     Top = 13
-    Width = 657
+    Width = 697
     Height = 25
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
   end
   object cbPortionen: TComboBox
-    Left = 232
+    Left = 193
     Top = 49
     Width = 145
     Height = 25
@@ -80,7 +110,7 @@ object wRecipeEditor: TwRecipeEditor
       'St'#252'ck')
   end
   object edPortionen: TEdit
-    Left = 164
+    Left = 125
     Top = 49
     Width = 57
     Height = 25
@@ -89,15 +119,15 @@ object wRecipeEditor: TwRecipeEditor
     Text = '4'
   end
   object stIngredients: TVirtualStringTree
-    Left = 164
+    Left = 124
     Top = 88
-    Width = 657
+    Width = 697
     Height = 201
     Header.AutoSizeIndex = 2
     Header.Height = 21
     Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
     Header.ParentFont = True
-    TabOrder = 3
+    TabOrder = 4
     TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoSort, toAutoTristateTracking, toAutoChangeScale]
     TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowTreeLines, toThemeAware, toUseBlendedImages]
     TreeOptions.SelectionOptions = [toFullRowSelect]
@@ -123,28 +153,28 @@ object wRecipeEditor: TwRecipeEditor
       end>
   end
   object edPreparation: TMemo
-    Left = 164
+    Left = 124
     Top = 365
-    Width = 657
-    Height = 204
+    Width = 697
+    Height = 128
     Anchors = [akLeft, akTop, akRight, akBottom]
     ScrollBars = ssVertical
-    TabOrder = 11
+    TabOrder = 12
   end
   object edQuantity: TEdit
-    Left = 164
+    Left = 124
     Top = 295
     Width = 62
     Height = 25
-    TabOrder = 4
+    TabOrder = 5
     OnKeyDown = edQuantityKeyDown
   end
   object cbMeasure: TComboBox
-    Left = 232
+    Left = 192
     Top = 295
     Width = 106
     Height = 25
-    TabOrder = 5
+    TabOrder = 6
     OnKeyDown = cbMeasureKeyDown
   end
   object btAdd: TButton
@@ -154,7 +184,7 @@ object wRecipeEditor: TwRecipeEditor
     Height = 25
     Action = acAdd
     Anchors = [akTop, akRight]
-    TabOrder = 8
+    TabOrder = 9
   end
   object btChange: TButton
     Left = 665
@@ -163,7 +193,7 @@ object wRecipeEditor: TwRecipeEditor
     Height = 25
     Action = acEdit
     Anchors = [akTop, akRight]
-    TabOrder = 9
+    TabOrder = 10
   end
   object btDelete: TButton
     Left = 746
@@ -172,28 +202,63 @@ object wRecipeEditor: TwRecipeEditor
     Height = 25
     Action = acDelete
     Anchors = [akTop, akRight]
-    TabOrder = 10
+    TabOrder = 11
   end
   object cbIngredient: TComboBox
-    Left = 344
+    Left = 304
     Top = 295
-    Width = 234
+    Width = 274
     Height = 25
     Anchors = [akLeft, akTop, akRight]
-    TabOrder = 6
+    TabOrder = 7
     OnKeyDown = cbIngredientKeyDown
   end
   object cbTitle: TCheckBox
-    Left = 164
+    Left = 124
     Top = 326
     Width = 170
     Height = 17
     Caption = 'Zwischen'#252'berschrift'
-    TabOrder = 7
+    TabOrder = 8
     OnClick = cbTitleClick
     OnKeyDown = cbTitleKeyDown
   end
-  object ActionList1: TActionList
+  object tbDiffRating: TTrackBar
+    Left = 125
+    Top = 511
+    Width = 244
+    Height = 45
+    Max = 8
+    TabOrder = 13
+  end
+  object tbRating: TTrackBar
+    Left = 577
+    Top = 511
+    Width = 244
+    Height = 45
+    Anchors = [akTop, akRight]
+    Max = 8
+    TabOrder = 14
+  end
+  object edSource: TEdit
+    Left = 125
+    Top = 562
+    Width = 696
+    Height = 25
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 15
+  end
+  object edPrepDuration: TEdit
+    Left = 764
+    Top = 49
+    Width = 57
+    Height = 25
+    Anchors = [akTop, akRight]
+    NumbersOnly = True
+    TabOrder = 3
+    Text = '0'
+  end
+  object alActions: TActionList
     Left = 36
     Top = 173
     object acAdd: TAction

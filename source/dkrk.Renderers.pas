@@ -32,6 +32,7 @@ type
     function TitleRow(const AIngredient: TIngredient): String;
     function Rating(const ACount, AMax: Integer;
       const AResNameOn, AResNameOff: String): String;
+    function WebLink(const AText: String): String;
   public
     procedure Render(const ARecipe: TRecipe; const AHTML: TStrings);
   end;
@@ -121,7 +122,7 @@ begin
     AHTML.Add(P(Format('Zubereitungsdauer: %d Minuten', [ARecipe.PrepDuration])));
 
   AHTML.Add(H2('Weitere Informationen'));
-  AHTML.Add(P(Format('Quelle: %s', [ARecipe.Source])));
+  AHTML.Add(P(Format('Quelle: %s', [WebLink(ARecipe.Source)])));
   AHTML.Add(P('Schwierigkeit:'));
   AHTML.Add(P(Rating(ARecipe.DiffRating div 2, 8, 'DIFF_ON', 'DIFF_OFF')));
   AHTML.Add(P('Bewertung:'));
@@ -141,6 +142,16 @@ function TRecipeRenderer.TitleRow(const AIngredient: TIngredient): String;
 begin
   Result := Format('<tr><td colspan="2"><b>%s</b></td></tr>',
     [AIngredient.Ingredient]);
+end;
+
+function TRecipeRenderer.WebLink(const AText: String): String;
+begin
+  if AText.StartsWith('http://', true) or AText.StartsWith('https://', true) then
+    Result := Format('<a href="%s">%s</a>', [AText, AText])
+  else if AText.StartsWith('www.', true) then
+    Result := Format('<a href="http://%s">%s</a>', [AText, AText])
+  else
+    Result := AText;
 end;
 
 {$ENDREGION}
