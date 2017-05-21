@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils, System.Generics.Collections, System.Classes,
-  Winapi.Windows,
+  Winapi.Windows, Winapi.ShellApi,
   Vcl.Controls, Vcl.StdCtrls,
   HtmlView, VirtualTrees,
   Spring.Collections,
@@ -107,6 +107,7 @@ type
     procedure OnStreamRequest(Sender: TObject; const SRC: String; var Stream: TStream);
     procedure OnBitmapRequest(Sender: TObject; const SRC: ThtString;
       var Bitmap: TBitmap; var Color: TColor);
+    procedure OnHotSpotClick(Sender: TObject; const SRC: string; var Handled: Boolean);
   public
     constructor Create;
     procedure SetHtmlViewer(const AHtmlViewer: THtmlViewer);
@@ -296,6 +297,7 @@ procedure TRecipeDisplayVisualizer.InitComponent;
 begin
   FHtmlViewer.OnhtStreamRequest := OnStreamRequest;
   FHtmlViewer.OnBitmapRequest := OnBitmapRequest;
+  FHtmlViewer.OnHotSpotClick := OnHotSpotClick;
 end;
 
 procedure TRecipeDisplayVisualizer.LoadStreamFromResource(
@@ -320,12 +322,19 @@ end;
 
 procedure TRecipeDisplayVisualizer.OnBitmapRequest(Sender: TObject;
   const SRC: ThtString; var Bitmap: TBitmap; var Color: TColor);
-var
-  MemHandle, ResHandle: THandle;
-  ResourceData: PChar;
 begin
   Bitmap := TBitmap.Create;
   Bitmap.Handle := LoadBitmap(HInstance, PChar(SRC));
+end;
+
+procedure TRecipeDisplayVisualizer.OnHotSpotClick(Sender: TObject;
+  const SRC: string; var Handled: Boolean);
+begin
+  if SRC.StartsWith('http://', true) or SRC.StartsWith('https://', true) then
+    begin
+      ShellExecute(0, 'open', PChar(SRC), nil, nil, SW_SHOWNORMAL);
+      Handled := true;
+    end;
 end;
 
 procedure TRecipeDisplayVisualizer.OnStreamRequest(Sender: TObject;
