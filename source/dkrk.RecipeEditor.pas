@@ -89,7 +89,7 @@ implementation
 
 uses
   Spring.Container, Spring.Collections,
-  dkrk.Ingredients;
+  dkrk.Ingredients, dkrk.Comparers;
 
 { TwRecipeEditor }
 
@@ -262,13 +262,22 @@ procedure TwRecipeEditor.LoadTemplates;
 var
   IngredientTemplates: IList<TIngredientTemplate>;
   IngredientTemplate: TIngredientTemplate;
+  IngredientTemplateComparer: TIngredientTemplateComparer;
   UnitTemplates: IList<TUnitTemplate>;
   UnitTemplate: TUnitTemplate;
+  UnitTemplateComparer: TUnitTemplateComparer;
 begin
   IngredientTemplates := Cookbook.GetSession.FindAll<TIngredientTemplate>();
+  IngredientTemplateComparer := TIngredientTemplateComparer.Create;
+  IngredientTemplates.Sort(IngredientTemplateComparer);
+  IngredientTemplateComparer.Free;
   for IngredientTemplate in IngredientTemplates do
     cbIngredient.Items.Add(IngredientTemplate.Name);
+
   UnitTemplates := Cookbook.GetSession.FindAll<TUnitTemplate>();
+  UnitTemplateComparer := TUnitTemplateComparer.Create;
+  UnitTemplates.Sort(UnitTemplateComparer);
+  UnitTemplateComparer.Free;
   for UnitTemplate in UnitTemplates do
     cbMeasure.Items.Add(UnitTemplate.Name);
 end;
