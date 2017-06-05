@@ -288,6 +288,8 @@ begin
       Categories := FCookbook.GetSession.FindAll<TCategory>();
       FCategoryVisualizer.SetCategories(Categories);
       FCategoryVisualizer.RenderContent;
+      FRecipeListVisualizer.Clear;
+      FRecipeDisplayVisualizer.Clear;
       txFilename.Caption := FCookbook.GetFilename;
     end
   else
