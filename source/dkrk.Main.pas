@@ -23,7 +23,6 @@ type
     pnRecipeButtons: TPanel;
     lbRecipes: TListBox;
     Splitter1: TSplitter;
-    ilImages: TImageList;
     btEditCategory: TButton;
     btDeleteCategory: TButton;
     btAddRecipe: TButton;

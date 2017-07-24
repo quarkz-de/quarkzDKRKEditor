@@ -10,7 +10,8 @@ uses
   dkrk.Visualizers in 'dkrk.Visualizers.pas',
   dkrk.Renderers in 'dkrk.Renderers.pas',
   dkrk.CategoryEditor in 'dkrk.CategoryEditor.pas' {wCategoryEditor},
-  dkrk.RecipeEditor in 'dkrk.RecipeEditor.pas' {wRecipeEditor};
+  dkrk.RecipeEditor in 'dkrk.RecipeEditor.pas' {wRecipeEditor},
+  dkrk.DataModule in 'dkrk.DataModule.pas' {dmGlobal: TDataModule};
 
 {$R *.res}
 
@@ -18,6 +19,7 @@ begin
   GlobalContainer.Build;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TdmGlobal, dmGlobal);
   Application.CreateForm(TwMain, wMain);
   Application.Run;
 end.
