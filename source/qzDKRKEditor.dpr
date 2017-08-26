@@ -11,7 +11,8 @@ uses
   dkrk.Renderers in 'dkrk.Renderers.pas',
   dkrk.CategoryEditor in 'dkrk.CategoryEditor.pas' {wCategoryEditor},
   dkrk.RecipeEditor in 'dkrk.RecipeEditor.pas' {wRecipeEditor},
-  dkrk.DataModule in 'dkrk.DataModule.pas' {dmGlobal: TDataModule};
+  dkrk.DataModule in 'dkrk.DataModule.pas' {dmGlobal: TDataModule},
+  dkrk.DragDropHandler in 'dkrk.DragDropHandler.pas';
 
 {$R *.res}
 

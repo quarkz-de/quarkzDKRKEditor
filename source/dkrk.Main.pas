@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ImgList, Vcl.ActnList,
   HTMLUn2, HtmlView,
-  dkrk.Cookbook, dkrk.Visualizers, dkrk.Entities;
+  dkrk.Cookbook, dkrk.Visualizers, dkrk.Entities, dkrk.DragDropHandler;
 
 type
   TwMain = class(TForm)
@@ -75,6 +75,7 @@ type
     FRecipeListVisualizer: IRecipeListVisualizer;
     FRecipeDisplayVisualizer: IRecipeDisplayVisualizer;
     FCookbook: ICookbook;
+    FDragDropHandler: IRecipeCategorieDragDropHandler;
     function GetSelectedCategory: TCategory;
     function IsCategorySelected: Boolean;
     procedure LoadRecipesOfSelectedCategory;
@@ -245,6 +246,9 @@ begin
 
   FRecipeDisplayVisualizer := GlobalContainer.Resolve<IRecipeDisplayVisualizer>;
   FRecipeDisplayVisualizer.SetHtmlViewer(hvRecipe);
+
+  FDragDropHandler := TRecipeCategorieDragDropHandler.Create;
+  FDragDropHandler.SetListboxes(lbCategories, lbRecipes);
 
   FCookbook := GlobalContainer.Resolve<ICookbook>;
 {$ifdef DEBUG}
