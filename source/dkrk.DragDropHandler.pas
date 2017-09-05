@@ -64,6 +64,7 @@ begin
       FRecipeListbox.DeleteSelected;
 
       Recipe.AssignedCategory := Category.Id;
+      Recipe.AddA := Category.Id.ToString;
       Cookbook.GetSession.Save(Recipe);
 
       FCategoryListbox.OnClick(FCategoryListbox);

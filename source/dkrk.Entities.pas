@@ -66,7 +66,7 @@ type
     property Rating: Integer read FRating write FRating;
     [Column('DIFFRATING')]
     property DiffRating: Integer read FDiffRating write FDiffRating;
-    [Column('ADDA')]
+    [Column('ADDA')]  // Zugeordnete Kategorien (Komma-separiert)
     property AddA: String read FAddA write FAddA;
     [Column('ADDB')]
     property AddB: String read FAddB write FAddB;
