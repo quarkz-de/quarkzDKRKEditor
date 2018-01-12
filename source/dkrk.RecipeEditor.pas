@@ -95,8 +95,8 @@ uses
 
 procedure TwRecipeEditor.acAddExecute(Sender: TObject);
 begin
-  ListVisualizer.AddIngredient(String(edQuantity.Text).ToSingle,
-    cbMeasure.Text, cbIngredient.Text, cbTitle.Checked);
+  ListVisualizer.AddIngredient(StrToFloatDef(edQuantity.Text, 0), cbMeasure.Text,
+    cbIngredient.Text, cbTitle.Checked);
   UpdateTemplates;
   ClearIngredientInput;
 end;
@@ -108,9 +108,11 @@ begin
 end;
 
 procedure TwRecipeEditor.acEditExecute(Sender: TObject);
+var
+  Quantity: Single;
 begin
-  ListVisualizer.ChangeIngredient(String(edQuantity.Text).ToSingle,
-    cbMeasure.Text, cbIngredient.Text, cbTitle.Checked);
+  ListVisualizer.ChangeIngredient(StrToFloatDef(edQuantity.Text, 0), cbMeasure.Text,
+    cbIngredient.Text, cbTitle.Checked);
   UpdateTemplates;
   ClearIngredientInput;
 end;
