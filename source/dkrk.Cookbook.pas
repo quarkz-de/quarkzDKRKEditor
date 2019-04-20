@@ -26,7 +26,8 @@ implementation
 uses
   Vcl.Dialogs,
   Spring.Container,
-  SQLiteTable3;
+  SQLiteTable3,
+  dkrk.Entities;
 
 type
   TCookbook = class(TInterfacedObject, ICookbook)
@@ -55,7 +56,8 @@ var
 begin
   DBManager := TDatabaseManager.Create(FConnection);
   try
-    DBManager.BuildDatabase;
+    if not DBManager.EntityExists(TRecipe) then
+      DBManager.BuildDatabase;
   finally
     DBManager.Free;
   end;
