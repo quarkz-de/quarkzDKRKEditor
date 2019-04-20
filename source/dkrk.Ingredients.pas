@@ -3,7 +3,7 @@ unit dkrk.Ingredients;
 interface
 
 uses
-  System.SysUtils, System.Classes, System.Generics.Collections;
+  System.SysUtils, System.Classes, System.Generics.Collections, System.Math;
 
 type
   TIngredient = class
