@@ -12,7 +12,8 @@ uses
   dkrk.CategoryEditor in 'dkrk.CategoryEditor.pas' {wCategoryEditor},
   dkrk.RecipeEditor in 'dkrk.RecipeEditor.pas' {wRecipeEditor},
   dkrk.DataModule in 'dkrk.DataModule.pas' {dmGlobal: TDataModule},
-  dkrk.DragDropHandler in 'dkrk.DragDropHandler.pas';
+  dkrk.DragDropHandler in 'dkrk.DragDropHandler.pas',
+  dkrk.Exporter in 'dkrk.Exporter.pas';
 
 {$R *.res}
 
