@@ -28,12 +28,14 @@ type
     ['{448DE1AE-36CC-4771-BAAC-31C9D3B90C79}']
     function Serialize(const AList: TIngredientsList): String;
     function Deserialize(const AValue: String): TIngredientsList;
+    function ToString(const AList: TIngredientsList): String;
   end;
 
   TIngredientsSerializer = class(TInterfacedObject, IIngredientsSerializer)
   private
     function GetItemSeparator: String;
     function GetValueSeparator: String;
+    function SerializeItem(const AIngredient: TIngredient): String;
     function ItemToString(const AIngredient: TIngredient): String;
   protected
     property ItemSeparator: String read GetItemSeparator;
@@ -41,6 +43,7 @@ type
   public
     function Serialize(const AList: TIngredientsList): String;
     function Deserialize(const AValue: String): TIngredientsList;
+    function ToString(const AList: TIngredientsList): String; reintroduce;
   end;
 
 implementation
@@ -89,6 +92,25 @@ var
   FormatSettings: TFormatSettings;
 begin
   FormatSettings.DecimalSeparator := '.';
+  if AIngredient.IsTitle then
+    Result := AIngredient.Ingredient + ':'
+  else if AIngredient.Quantity > 0 then
+    Result := String.Join(' ',
+      [FloatToStr(AIngredient.Quantity, FormatSettings),
+      AIngredient.Measure, AIngredient.Ingredient])
+  else
+    Result := String.Join(' ',
+      [AIngredient.Measure, AIngredient.Ingredient]);
+  Result := Result.Trim;
+  Result := Result.Replace('  ', ' ', [rfReplaceAll]);
+end;
+
+function TIngredientsSerializer.SerializeItem(
+  const AIngredient: TIngredient): String;
+var
+  FormatSettings: TFormatSettings;
+begin
+  FormatSettings.DecimalSeparator := '.';
   Result := String.Join(ValueSeparator,
     [FloatToStr(AIngredient.Quantity, FormatSettings),
     AIngredient.Measure, AIngredient.Ingredient]);
@@ -104,6 +126,19 @@ begin
     begin
       if Result <> '' then
          Result := Result + ItemSeparator;
+      Result := Result + SerializeItem(Ingredient);
+    end;
+end;
+
+function TIngredientsSerializer.ToString(const AList: TIngredientsList): String;
+var
+  Ingredient: TIngredient;
+begin
+  Result := '';
+  for Ingredient in AList do
+    begin
+      if Result <> '' then
+         Result := Result + #13#10;
       Result := Result + ItemToString(Ingredient);
     end;
 end;

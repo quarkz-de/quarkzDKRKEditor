@@ -181,7 +181,6 @@ object wMain: TwMain
         OnDblClick = lbCategoriesDblClick
         OnKeyDown = lbCategoriesKeyDown
         OnKeyPress = lbCategoriesKeyPress
-        ExplicitTop = 5
       end
     end
     object pnRecipes: TPanel
@@ -272,6 +271,9 @@ object wMain: TwMain
     Align = alTop
     ParentColor = True
     TabOrder = 2
+    DesignSize = (
+      973
+      45)
     object txFilename: TLabel
       Left = 192
       Top = 10
@@ -287,6 +289,17 @@ object wMain: TwMain
       Action = acOpenCookbook
       Images = dmGlobal.ilImages
       TabOrder = 0
+      TabStop = False
+    end
+    object btExport: TButton
+      Left = 792
+      Top = 6
+      Width = 173
+      Height = 33
+      Action = acExportCookbook
+      Anchors = [akTop, akRight]
+      Images = dmGlobal.ilImages
+      TabOrder = 1
       TabStop = False
     end
   end
@@ -342,17 +355,30 @@ object wMain: TwMain
       ImageIndex = 4
       OnExecute = acSaveRecipeAsPDFExecute
     end
+    object acExportCookbook: TAction
+      Category = 'File'
+      Caption = 'Kochbuch exportieren'
+      OnExecute = acExportCookbookExecute
+    end
   end
   object dPrint: TPrintDialog
     Left = 572
     Top = 296
   end
-  object dExport: TSaveDialog
+  object dPdfExport: TSaveDialog
     DefaultExt = 'pdf'
     Filter = 'Portable Document Format (*.pdf)|*.pdf'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
     Title = 'Rezept als PDF speichern'
     Left = 616
     Top = 296
+  end
+  object dCookbookExport: TSaveDialog
+    DefaultExt = 'reze'
+    Filter = 'Kochbuch-Exportdatei (*.reze;*.rez)|*.reze;*.rez'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
+    Title = 'Kochbuch exportieren'
+    Left = 696
+    Top = 293
   end
 end

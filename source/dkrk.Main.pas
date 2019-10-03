@@ -47,7 +47,10 @@ type
     dPrint: TPrintDialog;
     btSaveRecipeAsPDF: TButton;
     acSaveRecipeAsPDF: TAction;
-    dExport: TSaveDialog;
+    dPdfExport: TSaveDialog;
+    btExport: TButton;
+    dCookbookExport: TSaveDialog;
+    acExportCookbook: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbCategoriesClick(Sender: TObject);
@@ -69,6 +72,7 @@ type
     procedure acSaveRecipeAsPDFExecute(Sender: TObject);
     procedure lbCategoriesDblClick(Sender: TObject);
     procedure lbRecipesDblClick(Sender: TObject);
+    procedure acExportCookbookExecute(Sender: TObject);
   private
     { Private-Deklarationen }
     FCategoryVisualizer: ICategoryVisualizer;
@@ -81,6 +85,7 @@ type
     procedure LoadRecipesOfSelectedCategory;
     procedure LoadSelectedRecipe;
     procedure InitCookbook;
+    procedure ExportCookbook;
   public
     { Public-Deklarationen }
   end;
@@ -96,7 +101,7 @@ uses
   Spring.Container, Spring.Collections,
   qzLib.Core.HtmlViewerPdfWriter,
   dkrk.Ingredients, dkrk.Renderers, dkrk.CategoryEditor,
-  dkrk.RecipeEditor;
+  dkrk.RecipeEditor, dkrk.Exporter;
 
 procedure TwMain.acAddCategoryExecute(Sender: TObject);
 var
@@ -200,6 +205,11 @@ begin
     end;
 end;
 
+procedure TwMain.acExportCookbookExecute(Sender: TObject);
+begin
+  ExportCookbook;
+end;
+
 procedure TwMain.acOpenCookbookExecute(Sender: TObject);
 begin
   FCookbook.SelectAndLoad;
@@ -224,15 +234,26 @@ begin
 
       PFilename := PChar(Recipe.Name + '.pdf');
       PathCleanupSpec(nil, PFilename);
-      dExport.FileName := StrPas(PFilename);
+      dPdfExport.FileName := StrPas(PFilename);
 
-      if dExport.Execute then
+      if dPdfExport.Execute then
         begin
           Writer := THtmlViewerPdfWriter.Create(hvRecipe);
-          Writer.SaveToFile(dExport.FileName);
+          Writer.SaveToFile(dPdfExport.FileName);
 
-          ShellExecute(0, 'open', PChar(dExport.FileName), nil, nil, SW_SHOWNORMAL);
+          ShellExecute(0, 'open', PChar(dPdfExport.FileName), nil, nil, SW_SHOWNORMAL);
         end;
+    end;
+end;
+
+procedure TwMain.ExportCookbook;
+var
+  Exporter: ICookbookExporter;
+begin
+  if dCookbookExport.Execute then
+    begin
+      Exporter := TRezeFormatExporter.Create;
+      Exporter.SaveToFile(FCookbook, dCookbookExport.FileName);
     end;
 end;
 
@@ -285,6 +306,9 @@ begin
   acEditRecipe.Enabled := FCookbook.IsLoaded;
 
   acPrintRecipe.Enabled := FCookbook.IsLoaded;
+
+  acExportCookbook.Enabled := FCookbook.IsLoaded;
+
 
   if FCookbook.IsLoaded then
     begin
