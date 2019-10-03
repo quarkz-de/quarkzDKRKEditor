@@ -16,8 +16,6 @@ type
   private
     FData: String;
     FCookbook: ICookbook;
-    FKey: Integer;
-    CategoryDictionary: TDictionary<Integer, Integer>;
     procedure AddHeader;
     procedure AddFooter;
     procedure AddCategory(const ACategory: TCategory);
@@ -27,8 +25,6 @@ type
   protected
     property Data: String read FData;
   public
-    constructor Create;
-    destructor Destroy; override;
     procedure SaveToFile(const ACookbook: ICookbook; const AFilename: String);
   end;
 
@@ -49,13 +45,12 @@ var
   Recipes: IList<TRecipe>;
   Recipe: TRecipe;
 begin
-  Add(Format('<Kategorie Name="%s" Beschreibung="" Key="%d">', [ACategory.Name, FKey]));
-  CategoryDictionary.Add(ACategory.Id, FKey);
-  Inc(FKey);
+  Add(Format('<Kategorie Name="%s" Beschreibung="" Key="%d">', [ACategory.Name, ACategory.Id]));
 
   Recipes := FCookbook.GetSession.FindAll<TRecipe>();
   for Recipe in Recipes do
-    AddRecipe(Recipe);
+    if Recipe.Category.Id = ACategory.Id then
+      AddRecipe(Recipe);
 
   Add('</Kategorie>');
 end;
@@ -73,12 +68,9 @@ end;
 procedure TRezeFormatExporter.AddRecipe(const ARecipe: TRecipe);
 var
   Serializer: IIngredientsSerializer;
-  CatKey: Integer;
 begin
-  CategoryDictionary.TryGetValue(ARecipe.Category.Id, CatKey);
   Add(Format('<Rezept Name="%s" Bild="" Key="%d" Bewertung="0" Schwierigkeit="0" Quelle="%s" Anmerkung="" PersonenAnzahl="" PersonenAnzahlString="%d %s" Dauer="0" Kochzeit="0" DauerString="" KochzeitString="" Kategorien="%d">',
-    [ARecipe.Name, FKey, ARecipe.Source, ARecipe.Count, ARecipe.CountText, CatKey]));
-  Inc(FKey);
+    [ARecipe.Name, ARecipe.Id, ARecipe.Source, ARecipe.Count, ARecipe.CountText, ARecipe.Category.Id]));
   Add('<Zutaten>');
 
   Serializer := TIngredientsSerializer.Create;
@@ -92,20 +84,6 @@ end;
 procedure TRezeFormatExporter.Clear;
 begin
   FData := '';
-  FKey := 1;
-  CategoryDictionary.Clear;
-end;
-
-constructor TRezeFormatExporter.Create;
-begin
-  inherited Create;
-  CategoryDictionary := TDictionary<Integer, Integer>.Create;
-end;
-
-destructor TRezeFormatExporter.Destroy;
-begin
-  CategoryDictionary.Free;
-  inherited Destroy;
 end;
 
 procedure TRezeFormatExporter.SaveToFile(const ACookbook: ICookbook;
