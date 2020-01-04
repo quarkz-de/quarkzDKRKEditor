@@ -51,6 +51,8 @@ type
     btExport: TButton;
     dCookbookExport: TSaveDialog;
     acExportCookbook: TAction;
+    btExportRecipe: TButton;
+    acExportRecipe: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbCategoriesClick(Sender: TObject);
@@ -73,6 +75,8 @@ type
     procedure lbCategoriesDblClick(Sender: TObject);
     procedure lbRecipesDblClick(Sender: TObject);
     procedure acExportCookbookExecute(Sender: TObject);
+    procedure acExportRecipeExecute(Sender: TObject);
+    procedure hvRecipeKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private-Deklarationen }
     FCategoryVisualizer: ICategoryVisualizer;
@@ -86,6 +90,7 @@ type
     procedure LoadSelectedRecipe;
     procedure InitCookbook;
     procedure ExportCookbook;
+    procedure ExportRecipe;
   public
     { Public-Deklarationen }
   end;
@@ -210,6 +215,11 @@ begin
   ExportCookbook;
 end;
 
+procedure TwMain.acExportRecipeExecute(Sender: TObject);
+begin
+  ExportRecipe;
+end;
+
 procedure TwMain.acOpenCookbookExecute(Sender: TObject);
 begin
   FCookbook.SelectAndLoad;
@@ -257,6 +267,23 @@ begin
     end;
 end;
 
+procedure TwMain.ExportRecipe;
+var
+  Recipe: TRecipe;
+  Exporter: ICookbookExporter;
+begin
+  if lbRecipes.ItemIndex > -1 then
+    begin
+      Recipe := TRecipe(lbRecipes.Items.Objects[lbRecipes.ItemIndex]);
+
+      if dCookbookExport.Execute then
+        begin
+          Exporter := TRezeFormatExporter.Create;
+          Exporter.SaveToFile(FCookbook, Recipe, dCookbookExport.FileName);
+        end;
+    end;
+end;
+
 procedure TwMain.FormCreate(Sender: TObject);
 begin
   FCategoryVisualizer := GlobalContainer.Resolve<ICategoryVisualizer>;
@@ -291,6 +318,14 @@ begin
     Result := TCategory(lbCategories.Items.Objects[lbCategories.ItemIndex])
   else
     Result := nil;
+end;
+
+procedure TwMain.hvRecipeKeyDown(Sender: TObject; var Key: Word; Shift:
+    TShiftState);
+begin
+  if ((Key = Ord('C')) and (Shift = [ssCtrl])) or
+    ((Key = VK_INSERT) and (Shift = [ssCtrl])) then
+    hvRecipe.CopyToClipboard;
 end;
 
 procedure TwMain.InitCookbook;

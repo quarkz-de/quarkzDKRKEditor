@@ -21,6 +21,7 @@ begin
   GlobalContainer.Build;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.Title := 'quarkzDKRKEditor';
   Application.CreateForm(TdmGlobal, dmGlobal);
   Application.CreateForm(TwMain, wMain);
   Application.Run;

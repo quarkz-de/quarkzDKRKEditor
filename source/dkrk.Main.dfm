@@ -54,6 +54,7 @@ object wMain: TwMain
       PrintScale = 1.000000000000000000
       Align = alClient
       TabOrder = 0
+      OnKeyDown = hvRecipeKeyDown
       Touch.InteractiveGestures = [igPan]
       Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia]
     end
@@ -84,6 +85,16 @@ object wMain: TwMain
         Action = acSaveRecipeAsPDF
         Images = dmGlobal.ilImages
         TabOrder = 1
+        TabStop = False
+      end
+      object btExportRecipe: TButton
+        Left = 240
+        Top = 0
+        Width = 111
+        Height = 33
+        Action = acExportRecipe
+        Images = dmGlobal.ilImages
+        TabOrder = 2
         TabStop = False
       end
     end
@@ -359,6 +370,11 @@ object wMain: TwMain
       Category = 'File'
       Caption = 'Kochbuch exportieren'
       OnExecute = acExportCookbookExecute
+    end
+    object acExportRecipe: TAction
+      Category = 'Recipe'
+      Caption = 'Exportieren'
+      OnExecute = acExportRecipeExecute
     end
   end
   object dPrint: TPrintDialog

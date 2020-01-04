@@ -9,7 +9,9 @@ uses
 type
   ICookbookExporter = interface
     ['{97B3EE7C-0EF0-4CA6-B6B7-1A96A64BBEC8}']
-    procedure SaveToFile(const ACookbook: ICookbook; const AFilename: String);
+    procedure SaveToFile(const ACookbook: ICookbook; const AFilename: String); overload;
+    procedure SaveToFile(const ACookbook: ICookbook; const ARecipe: TRecipe;
+      const AFilename: String); overload;
   end;
 
   TRezeFormatExporter = class(TInterfacedObject, ICookbookExporter)
@@ -25,7 +27,9 @@ type
   protected
     property Data: String read FData;
   public
-    procedure SaveToFile(const ACookbook: ICookbook; const AFilename: String);
+    procedure SaveToFile(const ACookbook: ICookbook; const AFilename: String); overload;
+    procedure SaveToFile(const ACookbook: ICookbook; const ARecipe: TRecipe;
+      const AFilename: String); overload;
   end;
 
 implementation
@@ -84,6 +88,38 @@ end;
 procedure TRezeFormatExporter.Clear;
 begin
   FData := '';
+end;
+
+procedure TRezeFormatExporter.SaveToFile(const ACookbook: ICookbook;
+  const ARecipe: TRecipe; const AFilename: String);
+var
+  Categories: IList<TCategory>;
+  Category: TCategory;
+  Strings: TStringList;
+begin
+  FCookbook := ACookbook;
+
+  Clear;
+  AddHeader;
+
+  Categories := FCookbook.GetSession.FindAll<TCategory>();
+  for Category in Categories do
+    begin
+      if ARecipe.Category.Id = Category.Id then
+        begin
+          Add(Format('<Kategorie Name="%s" Beschreibung="" Key="%d">', [Category.Name, Category.Id]));
+          AddRecipe(ARecipe);
+          Add('</Kategorie>');
+        end;
+    end;
+
+  AddFooter;
+
+  Strings := TStringList.Create;
+  Strings.WriteBOM := true;
+  Strings.Text := Data;
+  Strings.SaveToFile(AFilename);
+  Strings.Free;
 end;
 
 procedure TRezeFormatExporter.SaveToFile(const ACookbook: ICookbook;
